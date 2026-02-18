@@ -139,34 +139,35 @@ def summarize_with_gemini(text):
 def main():
     init_db()
     
-    # 1. 영상 목록 가져오기 (3개월치)
+    # 1. 기존 JSON 데이터 로드 (메모리 역할)
+    # GitHub Action 환경은 DB파일이 초기화되므로 JSON을 기본 저장소로 활용합니다.
+    existing_data = []
+    if os.path.exists(JSON_OUTPUT_PATH):
+        try:
+            with open(JSON_OUTPUT_PATH, "r", encoding="utf-8") as f:
+                existing_data = json.load(f)
+            print(f"  > 로컬 JSON에서 {len(existing_data)}개의 기존 데이터를 불러왔습니다.")
+        except Exception as e:
+            print(f"  > JSON 로드 중 오류: {e}")
+            
+    existing_ids = {item['id'] for item in existing_data}
+
+    # 2. 영상 목록 가져오기 (3개월치)
     videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID, months=3)
-    print(f"Found {len(videos)} videos.")
-    
-    final_data = []
+    print(f"수집된 후보 영상: {len(videos)}개")
     
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
+    new_entries = []
+    
     for i, v in enumerate(videos):
-        print(f"[{i+1}/{len(videos)}] Processing: {v['title']}")
-        
-        # 기 저장 확인
-        cursor.execute("SELECT * FROM videos WHERE id=?", (v['id'],))
-        row = cursor.fetchone()
-        
-        if row:
-            print("  > Already exists in DB.")
-            final_data.append({
-                "id": row[0],
-                "title": row[1],
-                "summary": row[2],
-                "summaryList": json.loads(row[3]),
-                "keywords": json.loads(row[4]),
-                "publishedAt": row[5],
-                "videoUrl": row[6]
-            })
+        # 3. DB 또는 기존 JSON에 있는지 확인
+        cursor.execute("SELECT id FROM videos WHERE id=?", (v['id'],))
+        if cursor.fetchone() or v['id'] in existing_ids:
             continue
+            
+        print(f"[{i+1}/{len(videos)}] 새 요약 생성 중: {v['title']}")
             
         # 자막 추출
         transcript = get_transcript(v['id'])
@@ -189,17 +190,14 @@ def main():
             "videoUrl": v['videoUrl']
         }
         
-        # DB 저장
-        cursor.execute(
-            "INSERT INTO videos VALUES (?,?,?,?,?,?,?)",
-            (entry['id'], entry['title'], entry['summary'], json.dumps(entry['summaryList']), json.dumps(entry['keywords']), entry['publishedAt'], entry['videoUrl'])
-        )
-        conn.commit()
-        
-        final_data.append(entry)
-        time.sleep(1) # API 레이트 리밋 방지
+        new_entries.append(entry)
+        time.sleep(5) # Gemini Free Tier RPM(15) 준수를 위해 넉넉히 대기
         
     conn.close()
+    
+    # 4. 결과 병합 (새로운 것 + 기존 것)
+    # get_video_list가 최신순으로 가져오므로 new_entries를 앞에 둠
+    final_data = new_entries + existing_data
     
     # JSON 출력 (앱에서 사용)
     os.makedirs(os.path.dirname(JSON_OUTPUT_PATH), exist_ok=True)
