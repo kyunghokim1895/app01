@@ -16,7 +16,9 @@ const DetailScreen = ({ route }: any) => {
 
                 <View style={styles.tagContainer}>
                     {item.keywords?.map((tag: string, index: number) => (
-                        <Text key={index} style={styles.tag}>{tag}</Text>
+                        <View key={index} style={styles.tagBox}>
+                            <Text style={styles.tagText}>{tag?.trim()}</Text>
+                        </View>
                     ))}
                 </View>
 
@@ -71,15 +73,23 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         marginBottom: 20,
     },
-    tag: {
-        fontSize: 13,
-        color: '#007AFF',
+    tagBox: {
         backgroundColor: '#E5F1FF',
         paddingHorizontal: 10,
-        paddingVertical: 5,
+        paddingVertical: 6,
         borderRadius: 6,
         marginRight: 8,
         marginBottom: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: 28,
+    },
+    tagText: {
+        fontSize: 13,
+        color: '#007AFF',
+        includeFontPadding: false,
+        textAlignVertical: 'center',
+        lineHeight: 18,
     },
     summaryBox: {
         backgroundColor: '#f9f9f9',

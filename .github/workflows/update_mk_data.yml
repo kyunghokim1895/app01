@@ -1,0 +1,43 @@
+name: MK Invest Summary Update
+
+on:
+  schedule:
+    - cron: '30 22 * * *' # 매일 한국 시간 오전 7시 30분 (UTC 22:30)
+  workflow_dispatch: # 수동 실행 버튼 추가
+
+jobs:
+  update-summary:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r mk_crawler/requirements.txt
+
+      - name: Run news summary processor
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          cd mk_crawler
+          python processor.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add MKSummaryApp/src/services/data.json
+          git commit -m "Auto-update MK Invest summaries [$(date +'%Y-%m-%d')]" || echo "No changes to commit"
+          git push

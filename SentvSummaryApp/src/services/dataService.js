@@ -6,9 +6,10 @@ const REMOTE_DATA_URL = 'https://raw.githubusercontent.com/kyunghokim1895/app01/
 
 export const fetchSummaries = async () => {
     try {
-        // 1. 원격지에서 최신 데이터 가져오기 시도
+        // 1. 원격지에서 최신 데이터 가져오기 시도 (캐시 방지 파라미터 추가)
         console.log('Fetching remote data...');
-        const response = await axios.get(REMOTE_DATA_URL, { timeout: 5000 });
+        const timestamp = new Date().getTime();
+        const response = await axios.get(`${REMOTE_DATA_URL}?t=${timestamp}`, { timeout: 10000 });
         if (response.data && Array.isArray(response.data)) {
             console.log('Successfully loaded remote data');
             return response.data;

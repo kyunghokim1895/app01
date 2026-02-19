@@ -8,7 +8,9 @@ const SummaryCard = ({ item, onPress }) => {
             <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
             <View style={styles.tagContainer}>
                 {item.keywords?.map((tag, index) => (
-                    <Text key={index} style={styles.tag}>{tag}</Text>
+                    <View key={index} style={styles.tagBox}>
+                        <Text style={styles.tagText}>{tag?.trim()}</Text>
+                    </View>
                 ))}
             </View>
             <Text style={styles.summary} numberOfLines={3}>{item.summary}</Text>
@@ -45,15 +47,23 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         marginBottom: 8,
     },
-    tag: {
-        fontSize: 12,
-        color: '#007AFF',
+    tagBox: {
         backgroundColor: '#E5F1FF',
         paddingHorizontal: 8,
-        paddingVertical: 2,
+        paddingVertical: 4,
         borderRadius: 4,
         marginRight: 6,
-        marginBottom: 4,
+        marginBottom: 6,
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: 24,
+    },
+    tagText: {
+        fontSize: 12,
+        color: '#007AFF',
+        includeFontPadding: false,
+        textAlignVertical: 'center',
+        lineHeight: 16,
     },
     summary: {
         fontSize: 14,
