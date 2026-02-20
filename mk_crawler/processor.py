@@ -15,7 +15,7 @@ load_dotenv()
 # .env 파일에 저장된 키를 가져옵니다.
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-CHANNEL_ID = "UCIipmgxpUxDmPP-ma3Ahvbw" # 매경 월가월부 채널 ID
+CHANNEL_ID = "UCnfwIKyFYRuqZzzKBDt6JOA" # 매일경제TV (@MK_Invest) 메인 채널 ID
 
 # Gemini 설정
 genai.configure(api_key=GEMINI_API_KEY)
