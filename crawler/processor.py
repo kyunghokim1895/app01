@@ -90,12 +90,11 @@ def get_transcript(video_id):
         ]
         cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
         
-        # 이 환경의 라이브러리 버전에 맞춰 인스턴스 생성 후 list() 사용
-        api = YouTubeTranscriptApi()
+        # 0.6.2 버전부터는 list_transcripts 정적 메서드 사용 권장
         if cookies:
-            transcript_list = api.list(video_id, cookies=cookies)
+            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id, cookies=cookies)
         else:
-            transcript_list = api.list(video_id)
+            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
         try:
             transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
         except:
