@@ -64,8 +64,10 @@ def get_video_list(api_key, channel_id):
             type="video"
         )
         response = request.execute()
+        items = response.get("items", [])
+        print(f"  > API returned {len(items)} items in this batch. (Total so far: {len(videos) + len(items)})")
         
-        for item in response.get("items", []):
+        for item in items:
             title = html.unescape(item["snippet"]["title"])
             # Shorts 필터 제거 (사용자 요청: 쇼츠도 포함)
                 
@@ -158,7 +160,10 @@ def main():
 
     # 2. 영상 목록 가져오기 (2026년 이후 전수 조사)
     videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
-    print(f"수집된 후보 영상: {len(videos)}개")
+    print(f"  > [DEBUG] YouTube API returned total {len(videos)} videos.")
+    
+    if not videos:
+        print("  > [WARNING] No videos found. Check Channel ID or API Key.")
     
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -171,16 +176,19 @@ def main():
         if cursor.fetchone() or v['id'] in existing_ids:
             continue
             
-        print(f"[{i+1}/{len(videos)}] 새 요약 생성 중: {v['title']}")
+        print(f"[{i+1}/{len(videos)}] Processing: {v['title']} ({v['id']})")
             
         # 자막 추출
         transcript = get_transcript(v['id'])
         if not transcript:
+            print(f"  > [SKIP] No transcript found for {v['id']}")
             continue
             
+        print(f"  > [OK] Transcript found. Length: {len(transcript)}")
         # 요약
         analysis = summarize_with_gemini(transcript)
         if not analysis:
+            print(f"  > [ERROR] Gemini summarization failed for {v['id']}")
             continue
             
         # 결과 결합
