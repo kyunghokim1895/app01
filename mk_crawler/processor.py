@@ -58,7 +58,7 @@ def get_video_list(api_key, channel_id):
         request = youtube.search().list(
             part="snippet",
             channelId=channel_id,
-            maxResults=50,
+            maxResults=5, # 5개로 제한하여 성공 확률을 높임
             order="date",
             publishedAfter=published_after,
             pageToken=next_page_token,
@@ -215,8 +215,8 @@ def main():
             
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']} ({v['id']})")
         
-        # 유튜브 부하 분산을 위한 랜덤 대기 (인간처럼 보이게 함)
-        time.sleep(3 + random.random() * 3)
+        # 유튜브 부하 분산을 위한 대기 시간 대폭 증가 (성공률 위주)
+        time.sleep(10 + random.random() * 10)
             
         # 자막 추출
         transcript = get_transcript(v['id'])
