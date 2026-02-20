@@ -82,9 +82,16 @@ def get_video_list(api_key, channel_id):
 
 def get_transcript(video_id):
     try:
+        # 쿠키 파일이 있으면 사용 (IP 차단 우회용)
+        cookie_path = os.path.join(os.path.dirname(__file__), 'cookies.txt')
+        cookies = cookie_path if os.path.exists(cookie_path) else None
+        
         # 이 환경의 라이브러리 버전에 맞춰 인스턴스 생성 후 list() 사용
         api = YouTubeTranscriptApi()
-        transcript_list = api.list(video_id)
+        if cookies:
+            transcript_list = api.list(video_id, cookies=cookies)
+        else:
+            transcript_list = api.list(video_id)
         try:
             transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
         except:
