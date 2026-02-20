@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // 원격 데이터 URL (GitHub Raw 콘텐츠 주소)
-const REMOTE_DATA_URL = 'https://raw.githubusercontent.com/kyunghokim1895/app01/main/MKSummaryApp/src/services/data.json';
+const REMOTE_DATA_URL = 'https://raw.githubusercontent.com/kyunghokim1895/app01/main/JipconomyApp/src/services/data.json';
 
 export const fetchSummaries = async () => {
     try {
