@@ -82,19 +82,27 @@ def get_video_list(api_key, channel_id):
 
 def get_transcript(video_id):
     try:
+        # 이 환경의 라이브러리 버전에 맞춰 인스턴스 생성 후 list() 사용
         api = YouTubeTranscriptApi()
         transcript_list = api.list(video_id)
         try:
             transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
         except:
+            # 자동 생성된 자막 시도
             transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
             
         data = transcript.fetch()
-        # 이 버전에서는 객체이므로 .text로 접근해야 할 수도 있습니다.
-        try:
-            return " ".join([i.text for i in data])
-        except:
-            return " ".join([i['text'] for i in data])
+        # 다양한 라이브러리 버전에 대응 (dictionary 또는 object)
+        result = []
+        for i in data:
+            if isinstance(i, dict):
+                result.append(i.get('text', ''))
+            else:
+                try:
+                    result.append(getattr(i, 'text', ''))
+                except:
+                    result.append(str(i))
+        return " ".join(result)
     except Exception as e:
         print(f"  > Transcript Error for {video_id}: {e}")
         return None
