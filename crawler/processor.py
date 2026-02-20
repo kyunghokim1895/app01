@@ -44,9 +44,10 @@ def init_db():
 
 import html
 
-def get_video_list(api_key, channel_id, months=6):
+def get_video_list(api_key, channel_id):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-    published_after = (datetime.utcnow() - timedelta(days=months*30)).isoformat() + "Z"
+    # 사용자 요청: 2026년 데이터부터 시작
+    published_after = "2026-01-01T00:00:00Z"
     videos = []
     next_page_token = None
     
@@ -64,9 +65,7 @@ def get_video_list(api_key, channel_id, months=6):
         
         for item in response.get("items", []):
             title = html.unescape(item["snippet"]["title"])
-            # 더 포괄적인 필터
-            if any(x in title for x in ["#1분뉴스", "#1분 뉴스", "#쇼츠", "Shorts", "#숏폼"]):
-                continue
+            # 사용자 요청: 쇼츠(#Shorts) 포함 (필터 제거)
                 
             videos.append({
                 "id": item["id"]["videoId"],
@@ -75,8 +74,6 @@ def get_video_list(api_key, channel_id, months=6):
                 "videoUrl": f"https://www.youtube.com/watch?v={item['id']['videoId']}"
             })
             
-        if len(videos) >= 50:
-            break
         next_page_token = response.get("nextPageToken")
         if not next_page_token: break
     return videos
@@ -152,8 +149,8 @@ def main():
             
     existing_ids = {item['id'] for item in existing_data}
 
-    # 2. 영상 목록 가져오기 (3개월치)
-    videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID, months=3)
+    # 2. 영상 목록 가져오기 (2026년 이후 전수 조사)
+    videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
     print(f"수집된 후보 영상: {len(videos)}개")
     
     conn = sqlite3.connect(DB_PATH)
