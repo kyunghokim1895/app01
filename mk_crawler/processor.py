@@ -89,15 +89,21 @@ def get_transcript(video_id):
     max_retries = 3
     for attempt in range(max_retries):
         try:
-            # 유튜브 부하 분산을 위한 랜덤 대기 (인간처럼 보이게 함)
-            time.sleep(2 + random.random() * 2)
-            
-            # 쿠키 파일이 있으면 사용 (IP 차단 우회용)
+            # 쿠키 파일 확인 및 경로 출력 (진단용)
             possible_cookies = [
                 os.path.join(os.path.dirname(__file__), 'cookies.txt'),
                 os.path.join(os.path.dirname(__file__), 'www.youtube.com_cookies.txt')
             ]
             cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
+            
+            if attempt == 0:
+                if cookies:
+                    print(f"  > [DEBUG] Using cookie file: {os.path.basename(cookies)}")
+                else:
+                    print(f"  > [DEBUG] No cookie file found. Using anonymous request.")
+
+            # 유튜브 부하 분산을 위한 랜덤 대기
+            time.sleep(2 + random.random() * 2)
             
             # 0.6.2 버전부터는 list_transcripts 정적 메서드 사용 권장
             if cookies:
@@ -123,13 +129,14 @@ def get_transcript(video_id):
             return " ".join(result)
 
         except Exception as e:
-            error_str = str(e)
-            if "Too Many Requests" in error_str or "429" in error_str:
-                wait_time = (attempt + 1) * 60 + random.random() * 15 # 차단 시 더 넉넉히 대기
-                print(f"  > [WAIT] Too Many Requests. Retrying in {int(wait_time)}s... (Attempt {attempt+1}/{max_retries})")
+            error_str = str(e).lower()
+            # 429 에러나 XML 파싱 에러(no element found)는 재시도 진행
+            if "too many requests" in error_str or "429" in error_str or "no element found" in error_str:
+                wait_time = (attempt + 1) * 60 + random.random() * 20
+                print(f"  > [WAIT] YouTube temporary block detected. Retrying in {int(wait_time)}s... (Attempt {attempt+1}/{max_retries})")
                 time.sleep(wait_time)
-            elif "YouTube is blocking requests from your IP" in error_str:
-                print(f"  > [CRITICAL] IP Blocked even with cookies. Check cookies.txt or wait. ({video_id})")
+            elif "blocking requests from your ip" in error_str:
+                print(f"  > [CRITICAL] IP Blocked even with cookies. Please wait or update cookies.txt. ({video_id})")
                 return None
             else:
                 print(f"  > Transcript Error for {video_id}: {e}")
