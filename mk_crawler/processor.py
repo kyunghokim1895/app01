@@ -16,7 +16,7 @@ load_dotenv()
 # .env 파일에 저장된 키를 가져옵니다.
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-CHANNEL_ID = "UCnfwIKyFYRuqZzzKBDt6JOA" # 매일경제TV (@MK_Invest) 메인 채널 ID
+CHANNEL_ID = "UCIipmgxpUxDmPP-ma3Ahvbw" # 매경 월가월부 (@MK_WorldStreet) 전용 채널 ID
 
 # Gemini 설정
 genai.configure(api_key=GEMINI_API_KEY)
@@ -47,8 +47,8 @@ import html
 
 def get_video_list(api_key, channel_id):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-    # 사용자 요청: 오늘 데이터부터 시작 (과도한 요청 방지)
-    published_after = "2026-02-20T00:00:00Z"
+    # 사용자 요청: 최근 데이터부터 시작 (과도한 요청 방지 및 정확한 프로젝트 타겟팅)
+    published_after = "2026-02-18T00:00:00Z"
     videos = []
     next_page_token = None
     
