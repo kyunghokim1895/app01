@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import json
+import random
 from datetime import datetime, timedelta
 from youtube_transcript_api import YouTubeTranscriptApi
 import google.generativeai as genai
@@ -81,41 +82,55 @@ def get_video_list(api_key, channel_id):
     return videos
 
 def get_transcript(video_id):
-    try:
-        # 쿠키 파일이 있으면 사용 (IP 차단 우회용)
-        # 여러 가능한 파일명을 확인합니다.
-        possible_cookies = [
-            os.path.join(os.path.dirname(__file__), 'cookies.txt'),
-            os.path.join(os.path.dirname(__file__), 'www.youtube.com_cookies.txt')
-        ]
-        cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
-        
-        # 0.6.2 버전부터는 list_transcripts 정적 메서드 사용 권장
-        if cookies:
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id, cookies=cookies)
-        else:
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+    max_retries = 3
+    for attempt in range(max_retries):
         try:
-            transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
-        except:
-            # 자동 생성된 자막 시도
-            transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
+            # 유튜브 부하 분산을 위한 랜덤 대기 (인간처럼 보이게 함)
+            time.sleep(2 + random.random() * 2)
             
-        data = transcript.fetch()
-        # 다양한 라이브러리 버전에 대응 (dictionary 또는 object)
-        result = []
-        for i in data:
-            if isinstance(i, dict):
-                result.append(i.get('text', ''))
+            # 쿠키 파일이 있으면 사용 (IP 차단 우회용)
+            possible_cookies = [
+                os.path.join(os.path.dirname(__file__), 'cookies.txt'),
+                os.path.join(os.path.dirname(__file__), 'www.youtube.com_cookies.txt')
+            ]
+            cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
+            
+            # 0.6.2 버전부터는 list_transcripts 정적 메서드 사용 권장
+            if cookies:
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id, cookies=cookies)
             else:
-                try:
-                    result.append(getattr(i, 'text', ''))
-                except:
-                    result.append(str(i))
-        return " ".join(result)
-    except Exception as e:
-        print(f"  > Transcript Error for {video_id}: {e}")
-        return None
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                
+            try:
+                transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
+            except:
+                transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
+                
+            data = transcript.fetch()
+            result = []
+            for i in data:
+                if isinstance(i, dict):
+                    result.append(i.get('text', ''))
+                else:
+                    try:
+                        result.append(getattr(i, 'text', ''))
+                    except:
+                        result.append(str(i))
+            return " ".join(result)
+
+        except Exception as e:
+            error_str = str(e)
+            if "Too Many Requests" in error_str or "429" in error_str:
+                wait_time = (attempt + 1) * 60 + random.random() * 15 # 차단 시 더 넉넉히 대기
+                print(f"  > [WAIT] Too Many Requests. Retrying in {int(wait_time)}s... (Attempt {attempt+1}/{max_retries})")
+                time.sleep(wait_time)
+            elif "YouTube is blocking requests from your IP" in error_str:
+                print(f"  > [CRITICAL] IP Blocked even with cookies. Check cookies.txt or wait. ({video_id})")
+                return None
+            else:
+                print(f"  > Transcript Error for {video_id}: {e}")
+                break
+    return None
 
 def summarize_with_gemini(text):
     prompt = f"""
@@ -188,6 +203,9 @@ def main():
             continue
             
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']} ({v['id']})")
+        
+        # 유튜브 부하 분산을 위한 랜덤 대기 (인간처럼 보이게 함)
+        time.sleep(3 + random.random() * 3)
             
         # 자막 추출
         transcript = get_transcript(v['id'])
