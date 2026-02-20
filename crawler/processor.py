@@ -47,8 +47,8 @@ import html
 
 def get_video_list(api_key, channel_id):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-    # 사용자 요청: 최근 데이터부터 시작 (과도한 요청 방지 및 정확한 프로젝트 타겟팅)
-    published_after = "2026-02-18T00:00:00Z"
+    # 사용자 요청: 정확히 오늘 데이터부터 시작 (과도한 요청 방지)
+    published_after = "2026-02-20T00:00:00Z"
     videos = []
     next_page_token = None
     
@@ -78,7 +78,7 @@ def get_video_list(api_key, channel_id):
             })
             
         next_page_token = response.get("nextPageToken")
-        if not next_page_token: break
+        if not next_page_token or len(videos) >= 5: break
     return videos
 
 def get_transcript(video_id):
