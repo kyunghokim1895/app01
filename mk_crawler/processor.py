@@ -395,7 +395,21 @@ def main():
             print(f"  > [ERROR] All summarization methods failed for {v['id']}")
             continue
             
-        # 결과 결합
+        # DB에 즉시 저장 (중간에 멈춰도 데이터 보존)
+        cursor.execute("""
+            INSERT INTO videos (id, title, summary, summaryList, keywords, publishedAt, videoUrl)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            v['id'], 
+            v['title'], 
+            analysis.get("summary", ""), 
+            json.dumps(analysis.get("summaryList", []), ensure_ascii=False),
+            json.dumps(analysis.get("keywords", []), ensure_ascii=False),
+            v['publishedAt'],
+            v['videoUrl']
+        ))
+        conn.commit()
+        
         entry = {
             "id": v['id'],
             "title": v['title'],

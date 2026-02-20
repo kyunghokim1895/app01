@@ -98,7 +98,7 @@ def get_transcript_via_ytdlp(video_id):
     cmd.append(url)
     
     try:
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=60)
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=120)
         # 생성된 자막 파일 찾기
         files = glob.glob(f"{temp_prefix}*")
         sub_file = next((f for f in files if f.endswith(('.vtt', '.srt'))), None)
@@ -388,7 +388,21 @@ def main():
             print(f"  > [ERROR] All summarization methods failed for {v['id']}")
             continue
             
-        # 결과 결합
+        # DB에 즉시 저장 (중간에 멈춰도 데이터 보존)
+        cursor.execute("""
+            INSERT INTO videos (id, title, summary, summaryList, keywords, publishedAt, videoUrl)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            v['id'], 
+            v['title'], 
+            analysis.get("summary", ""), 
+            json.dumps(analysis.get("summaryList", []), ensure_ascii=False),
+            json.dumps(analysis.get("keywords", []), ensure_ascii=False),
+            v['publishedAt'],
+            v['videoUrl']
+        ))
+        conn.commit()
+        
         entry = {
             "id": v['id'],
             "title": v['title'],
