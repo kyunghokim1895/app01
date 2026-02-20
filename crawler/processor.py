@@ -47,8 +47,8 @@ import html
 
 def get_video_list(api_key, channel_id):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-    # 사용자 요청: 2026년 데이터부터 시작
-    published_after = "2026-01-01T00:00:00Z"
+    # 사용자 요청: 오늘 데이터부터 시작 (과도한 요청 방지)
+    published_after = "2026-02-20T00:00:00Z"
     videos = []
     next_page_token = None
     
