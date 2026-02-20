@@ -99,7 +99,7 @@ def get_transcript_via_ytdlp(video_id):
 
 def get_video_list(api_key, channel_id):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-    published_after = (datetime.now() - timedelta(days=2)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    published_after = (datetime.now() - timedelta(days=14)).strftime("%Y-%m-%dT%H:%M:%SZ")
     videos = []
     next_page_token = None
     while True:
