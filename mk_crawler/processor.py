@@ -3,10 +3,13 @@ import sqlite3
 import json
 import random
 from datetime import datetime, timedelta
+import time
+import subprocess
+import re
+import glob
 from youtube_transcript_api import YouTubeTranscriptApi
 import google.generativeai as genai
 import googleapiclient.discovery
-import time
 from dotenv import load_dotenv
 
 # .env 파일 로드
@@ -44,6 +47,163 @@ def init_db():
     conn.close()
 
 import html
+
+def clean_vtt(vtt_text):
+    """VTT 자막 파일에서 태그와 타임스탬프를 제거하고 순수 텍스트만 추출합니다."""
+    # 타임스탬프 및 설정 줄 제거
+    lines = vtt_text.splitlines()
+    clean_lines = []
+    for line in lines:
+        if "-->" in line or line.startswith("WEBVTT") or line.startswith("Kind:") or line.startswith("Language:"):
+            continue
+        # HTML 태그 제거 (<...>)
+        line = re.sub(r'<[^>]+>', '', line)
+        line = line.strip()
+        if line:
+            clean_lines.append(line)
+    
+    # 중복 라인 제거 (VTT 특성상 겹치는 경우가 많음)
+    final_lines = []
+    for line in clean_lines:
+        if not final_lines or final_lines[-1] != line:
+            final_lines.append(line)
+            
+    return " ".join(final_lines)
+
+def get_transcript_via_ytdlp(video_id):
+    """yt-dlp를 사용하여 차단을 우회하고 자막을 가져옵니다."""
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    temp_prefix = f"temp_sub_{video_id}"
+    
+    cmd = [
+        "python3", "-m", "yt_dlp",
+        "--skip-download",
+        "--write-auto-subs",
+        "--write-subs",
+        "--sub-lang", "ko",
+        "--js-runtimes", "node",
+        "--remote-components", "ejs:github",
+        "-o", temp_prefix,
+    ]
+    
+    # 쿠키 파일이 있으면 추가
+    possible_cookies = [
+        os.path.join(os.path.dirname(__file__), 'cookies.txt'),
+        os.path.join(os.path.dirname(__file__), 'www.youtube.com_cookies.txt')
+    ]
+    cookie_file = next((p for p in possible_cookies if os.path.exists(p)), None)
+    if cookie_file:
+        cmd.extend(["--cookies", cookie_file])
+    
+    cmd.append(url)
+    
+    try:
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=60)
+        # 생성된 자막 파일 찾기
+        files = glob.glob(f"{temp_prefix}*")
+        sub_file = next((f for f in files if f.endswith(('.vtt', '.srt'))), None)
+        
+        if sub_file:
+            with open(sub_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # 파일 삭제
+            for f in files: os.remove(f)
+            
+            if sub_file.endswith('.vtt'):
+                return clean_vtt(content)
+            return content # SRT는 나중에 필요하면 추가 처리
+        else:
+            print(f"  > [FALLBACK INFO] No subtitle files found by yt-dlp (might not have CC).")
+            
+    except subprocess.CalledProcessError as e:
+        # 쿠키 문제일 경우 쿠키 없이 한 번 더 시도
+        if "cookies" in str(e.stderr).lower():
+            print(f"  > [FALLBACK INFO] Cookies seems invalid. Retrying without cookies...")
+            new_cmd = [c for c in cmd if c != cookie_file and c != "--cookies"]
+            try:
+                result = subprocess.run(new_cmd, check=True, capture_output=True, text=True, timeout=60)
+                files = glob.glob(f"{temp_prefix}*")
+                sub_file = next((f for f in files if f.endswith(('.vtt', '.srt'))), None)
+                if sub_file:
+                    with open(sub_file, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                    for f in files: os.remove(f)
+                    return clean_vtt(content) if sub_file.endswith('.vtt') else content
+            except:
+                pass
+        print(f"  > [FALLBACK ERROR] yt-dlp failed: {e.stderr[:200]}")
+    except Exception as e:
+        print(f"  > [FALLBACK ERROR] yt-dlp fetch failed: {e}")
+        # 잔류 파일 정리
+        for f in glob.glob(f"{temp_prefix}*"): os.remove(f)
+        
+    return None
+
+def get_transcript(video_id):
+    max_retries = 2
+    # 1단계: 기존 API 방식 시도
+    for attempt in range(max_retries):
+        try:
+            # 환경 변수에서 쿠키 가져오기 (GitHub Actions용)
+            env_cookies = os.getenv("YOUTUBE_COOKIES")
+            temp_cookie_path = os.path.join(os.path.dirname(__file__), "temp_cookies.txt")
+            
+            if env_cookies:
+                with open(temp_cookie_path, "w") as f:
+                    f.write(env_cookies)
+                cookies = temp_cookie_path
+            else:
+                possible_cookies = [
+                    os.path.join(os.path.dirname(__file__), 'cookies.txt'),
+                    os.path.join(os.path.dirname(__file__), 'www.youtube.com_cookies.txt')
+                ]
+                cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
+            
+            if attempt == 0:
+                if cookies:
+                    print(f"  > [DEBUG] Using cookie file: {os.path.basename(cookies)}")
+                else:
+                    print(f"  > [DEBUG] No cookie file found. Using anonymous request.")
+
+            time.sleep(2 + random.random() * 2)
+            
+            if cookies:
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id, cookies=cookies)
+            else:
+                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                
+            try:
+                transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
+            except:
+                transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
+                
+            data = transcript.fetch()
+            return " ".join([i.get('text', '') for i in data])
+
+        except Exception as e:
+            error_str = str(e).lower()
+            if "too many requests" in error_str or "429" in error_str or "no element found" in error_str:
+                print(f"  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...")
+                # 2단계: 유튜브 API가 막혔을 때 yt-dlp로 즉시 우회
+                fallback_text = get_transcript_via_ytdlp(video_id)
+                if fallback_text:
+                    print(f"  > [SUCCESS] Bypassed block using yt-dlp strategy!")
+                    return fallback_text
+                
+                # 우회도 실패하면 다시 대기 후 시도
+                wait_time = (attempt + 1) * 30 + random.random() * 10
+                print(f"  > [WAIT] Both methods failed. Retrying in {int(wait_time)}s...")
+                time.sleep(wait_time)
+            else:
+                print(f"  > Transcript Error for {video_id}: {e}")
+                break
+        finally:
+            temp_cookie_path = os.path.join(os.path.dirname(__file__), "temp_cookies.txt")
+            if os.path.exists(temp_cookie_path) and os.getenv("YOUTUBE_COOKIES"):
+                try: os.remove(temp_cookie_path)
+                except: pass
+    return None
 
 def get_video_list(api_key, channel_id):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
@@ -85,63 +245,27 @@ def get_video_list(api_key, channel_id):
             
     return videos
 
-def get_transcript(video_id):
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            # 쿠키 파일 확인 및 경로 출력 (진단용)
-            possible_cookies = [
-                os.path.join(os.path.dirname(__file__), 'cookies.txt'),
-                os.path.join(os.path.dirname(__file__), 'www.youtube.com_cookies.txt')
-            ]
-            cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
-            
-            if attempt == 0:
-                if cookies:
-                    print(f"  > [DEBUG] Using cookie file: {os.path.basename(cookies)}")
-                else:
-                    print(f"  > [DEBUG] No cookie file found. Using anonymous request.")
-
-            # 유튜브 부하 분산을 위한 랜덤 대기
-            time.sleep(2 + random.random() * 2)
-            
-            # 0.6.2 버전부터는 list_transcripts 정적 메서드 사용 권장
-            if cookies:
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id, cookies=cookies)
+def parse_json_from_gemini(text_resp):
+    """Gemini 응답에서 JSON 부분을 추출하여 파싱합니다."""
+    try:
+        if "```" in text_resp:
+            json_match = re.search(r"```(?:json)?\s*(.*?)\s*```", text_resp, re.DOTALL)
+            if json_match:
+                text_resp = json_match.group(1)
             else:
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                text_resp = re.sub(r"```(json)?", "", text_resp).strip()
                 
-            try:
-                transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
-            except:
-                transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
-                
-            data = transcript.fetch()
-            result = []
-            for i in data:
-                if isinstance(i, dict):
-                    result.append(i.get('text', ''))
-                else:
-                    try:
-                        result.append(getattr(i, 'text', ''))
-                    except:
-                        result.append(str(i))
-            return " ".join(result)
-
-        except Exception as e:
-            error_str = str(e).lower()
-            # 429 에러나 XML 파싱 에러(no element found)는 재시도 진행
-            if "too many requests" in error_str or "429" in error_str or "no element found" in error_str:
-                wait_time = (attempt + 1) * 60 + random.random() * 20
-                print(f"  > [WAIT] YouTube temporary block detected. Retrying in {int(wait_time)}s... (Attempt {attempt+1}/{max_retries})")
-                time.sleep(wait_time)
-            elif "blocking requests from your ip" in error_str:
-                print(f"  > [CRITICAL] IP Blocked even with cookies. Please wait or update cookies.txt. ({video_id})")
-                return None
-            else:
-                print(f"  > Transcript Error for {video_id}: {e}")
-                break
-    return None
+        result = json.loads(text_resp)
+        # 키 정규화 (가끔 Gemini가 한글 키를 보낼 수 있음)
+        formatted = {
+            "summary": result.get("summary", result.get("요약", "")),
+            "summaryList": result.get("summaryList", result.get("요점", result.get("핵심내용", []))),
+            "keywords": result.get("keywords", result.get("키워드", []))
+        }
+        return formatted
+    except Exception as e:
+        print(f"  > Gemini/JSON Error: {e}")
+        return None
 
 def summarize_with_gemini(text):
     prompt = f"""
@@ -162,22 +286,61 @@ def summarize_with_gemini(text):
     """
     try:
         response = model.generate_content(prompt)
-        text_resp = response.text.strip()
-        
-        # ```json 마크다운 제거
-        if "```" in text_resp:
-            import re
-            json_match = re.search(r"```(?:json)?\s*(.*?)\s*```", text_resp, re.DOTALL)
-            if json_match:
-                text_resp = json_match.group(1)
-            else:
-                text_resp = re.sub(r"```(json)?", "", text_resp).strip()
-                
-        result = json.loads(text_resp)
-        return result
+        return parse_json_from_gemini(response.text)
     except Exception as e:
-        print(f"  > Gemini/JSON Error: {e}")
+        print(f"  > Gemini Error for transcript: {e}")
         return None
+
+def summarize_from_audio(video_id):
+    """자막이 없을 때 영상을 직접 '듣고' 요약하는 최후의 수단입니다 (Lilys AI 방식)."""
+    url = f"https://www.youtube.com/watch?v={video_id}"
+    audio_path = f"temp_audio_{video_id}.m4a"
+    
+    print(f"  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...")
+    
+    cmd = [
+        "python3", "-m", "yt_dlp",
+        "-f", "ba[ext=m4a]",
+        "-o", audio_path,
+        "--max-filesize", "20M",
+        "--js-runtimes", "node",
+        "--remote-components", "ejs:github",
+        url
+    ]
+    
+    try:
+        # 1. 오디오 다운로드
+        subprocess.run(cmd, check=True, capture_output=True, timeout=180)
+        if not os.path.exists(audio_path):
+            return None
+            
+        print(f"  > [OK] Audio downloaded ({os.path.getsize(audio_path)//1024}KB). Uploading to Gemini...")
+        
+        # 2. Gemini에 파일 업로드
+        sample_file = genai.upload_file(path=audio_path, display_name=f"Audio_{video_id}")
+        
+        # 3. 멀티모달 분석 및 요약
+        prompt = """
+        아래 오디오는 '매경 월가월부'의 투자 뉴스 영상이야. 내용을 매우 주의 깊게 경청하고 다음 형식을 지켜서 한국어로 정리해줘:
+        1. 전체 내용을 아우르는 1~2문장의 짧은 서술형 요약을 작성할 것. (summary 필드)
+        2. 핵심 내용을 5개 문장의 번호 리스트로 작성할 것 (1., 2., 3., 4., 5.) (summaryList 필드)
+        3. 영상과 관련된 핵심 키워드를 #으로 시작하는 태그 4개 정도 뽑아줄 것. (keywords 필드)
+        
+        응답은 반드시 순수 JSON 형식으로만 해야 해.
+        """
+        
+        response = model.generate_content([sample_file, prompt])
+        
+        # 4. 정리
+        genai.delete_file(sample_file.name)
+        os.remove(audio_path)
+        
+        return parse_json_from_gemini(response.text)
+        
+    except Exception as e:
+        print(f"  > [ULTIMATE ERROR] Audio analysis failed: {e}")
+        if os.path.exists(audio_path): os.remove(audio_path)
+    return None
 
 def main():
     init_db()
@@ -218,17 +381,18 @@ def main():
         # 유튜브 부하 분산을 위한 대기 시간 대폭 증가 (성공률 위주)
         time.sleep(10 + random.random() * 10)
             
-        # 자막 추출
+        # 자막 추출 시도
         transcript = get_transcript(v['id'])
-        if not transcript:
-            print(f"  > [SKIP] No transcript found for {v['id']}")
-            continue
+        
+        if transcript:
+            print(f"  > [OK] Transcript found (Length: {len(transcript)}). Summarizing...")
+            analysis = summarize_with_gemini(transcript)
+        else:
+            # 최종 수단: 직접 듣기
+            analysis = summarize_from_audio(v['id'])
             
-        print(f"  > [OK] Transcript found. Length: {len(transcript)}")
-        # 요약
-        analysis = summarize_with_gemini(transcript)
         if not analysis:
-            print(f"  > [ERROR] Gemini summarization failed for {v['id']}")
+            print(f"  > [ERROR] All summarization methods failed for {v['id']}")
             continue
             
         # 결과 결합

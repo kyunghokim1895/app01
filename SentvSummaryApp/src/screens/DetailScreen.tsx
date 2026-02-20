@@ -1,12 +1,34 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, Linking, Share } from 'react-native';
 
-const DetailScreen = ({ route }: any) => {
+const DetailScreen = ({ route, navigation }: any) => {
     const { item } = route.params;
 
     const openYouTube = () => {
         Linking.openURL(item.videoUrl);
     };
+
+    const onShare = async () => {
+        try {
+            await Share.share({
+                message: `[서울경제TV 핵심요약]\n\n${item.title}\n\n${item.summary}\n\n영상 보기: ${item.videoUrl}`,
+            });
+        } catch (error: any) {
+            console.error(error.message);
+        }
+    };
+
+    React.useLayoutEffect(() => {
+        if (navigation) {
+            navigation.setOptions({
+                headerRight: () => (
+                    <TouchableOpacity onPress={onShare} style={{ marginRight: 15 }}>
+                        <Text style={{ color: '#007AFF', fontSize: 16, fontWeight: 'bold' }}>공유</Text>
+                    </TouchableOpacity>
+                ),
+            });
+        }
+    }, [navigation, item]);
 
     return (
         <ScrollView style={styles.container}>
@@ -42,6 +64,10 @@ const DetailScreen = ({ route }: any) => {
 
                 <TouchableOpacity style={styles.button} onPress={openYouTube}>
                     <Text style={styles.buttonText}>유튜브에서 영상 보기</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.button, styles.shareButton]} onPress={onShare}>
+                    <Text style={styles.buttonText}>요약 내용 공유하기</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>
@@ -130,6 +156,10 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 16,
         fontWeight: 'bold',
+    },
+    shareButton: {
+        backgroundColor: '#007AFF',
+        marginTop: 10,
     }
 });
 
