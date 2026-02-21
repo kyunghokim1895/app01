@@ -207,8 +207,8 @@ def get_transcript(video_id):
 
 def get_video_list(api_key, channel_id):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-    # 사용자 요청: 정확히 오늘 데이터부터 시작 (과도한 요청 방지)
-    published_after = "2026-02-20T00:00:00Z"
+    # 사용자 요청: 지난 30일간의 데이터를 보강하기 위해 설정 변경
+    published_after = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
     videos = []
     next_page_token = None
     
@@ -218,7 +218,7 @@ def get_video_list(api_key, channel_id):
         request = youtube.search().list(
             part="snippet",
             channelId=channel_id,
-            maxResults=5, # 5개로 제한하여 성공 확률을 높임
+            maxResults=50, 
             order="date",
             publishedAfter=published_after,
             pageToken=next_page_token,
@@ -230,8 +230,6 @@ def get_video_list(api_key, channel_id):
         
         for item in items:
             title = html.unescape(item["snippet"]["title"])
-            # Shorts 필터 제거 (사용자 요청: 쇼츠도 포함)
-                
             videos.append({
                 "id": item["id"]["videoId"],
                 "title": title,
@@ -240,7 +238,7 @@ def get_video_list(api_key, channel_id):
             })
             
         next_page_token = response.get("nextPageToken")
-        if not next_page_token or len(videos) >= 5: break
+        if not next_page_token or len(videos) >= 30: break
         
             
     return videos
