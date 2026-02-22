@@ -319,3 +319,509 @@ See README for more details:
 https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
 
   import google.generativeai as genai
+[1/43] Processing: 한국경제신문 30분 만에 읽기 | 20260223🌞#모닝루틴 | 아침 8시 라이브
+[2/43] Processing: 한국경제신문 30분 만에 읽기 | 20260220🌞#모닝루틴 | 아침 8시 라이브
+[3/43] Processing: 한국경제신문 30분 만에 읽기 | 20260219🌞#모닝루틴 | 아침 8시 라이브
+[4/43] Processing: 국내시장복귀계좌(RIA) 핵심 정리 | #모닝루틴 번외편 EP.09
+[5/43] Processing: 코스피&코스닥 모든 업종 총정리 | 키워드요정
+[6/43] Processing: 종합투자계좌(IMA) 핵심 정리 | #모닝루틴 번외편 EP.08
+[9/43] Processing: 한국경제신문 30분 만에 읽기 | 20260213🌞#모닝루틴 | 아침 8시 라이브
+[10/43] Processing: LG전자 희망고문, 하루 만인가요? [2월12일 #퇴근요정]
+[11/43] Processing: 한국경제신문 30분 만에 읽기 | 20260212🌞#모닝루틴 | 아침 8시 라이브
+[12/43] Processing: 지난주 악몽 지나갔나요, 이젠 매물 소화 국면 [2월11일 #퇴근요정]
+[13/43] Processing: 한국경제신문 30분 만에 읽기 | 20260211🌞#모닝루틴 | 아침 8시 라이브
+[14/43] Processing: 다시 혼돈의 증시, 어려워지는 투자법 [2월10일 #퇴근요정]
+[15/43] Processing: 한국경제신문 30분 만에 읽기 | 20260210🌞#모닝루틴 | 아침 8시 라이브
+[16/43] Processing: 4만% 급등한 코스닥 주식 알고보니.. [2월9일 #퇴근요정]
+[17/43] Processing: 한국경제신문 30분 만에 읽기 | 20260209🌞#모닝루틴 | 아침 8시 라이브
+[18/43] Processing: 또 시장 덮친 공포, 검은 금요일 [2월6일 #퇴근요정]
+[19/43] Processing: 해수부 담당자가 밝힌 '심해 바이오'의 진짜 가치 | 딥코노미
+[20/43] Processing: 한국경제신문 30분 만에 읽기 | 20260206🌞#모닝루틴 | 아침 8시 라이브
+[21/43] Processing: 개인 6.7조 매수, 외국인은 5조 매도 [2월5일 #퇴근요정]
+[22/43] Processing: 한국경제신문 30분 만에 읽기 | 20260205🌞#모닝루틴 | 아침 8시 라이브
+[23/43] Processing: 국민주식 삼성전자 시총 1000조 돌파 [2월4일 #퇴근요정]
+[24/43] Processing: 한국경제신문 30분 만에 읽기 | 20260204🌞#모닝루틴 | 아침 8시 라이브
+[25/43] Processing: 7%나 급등한 코스피, 귀금속 값도 진정 [2월3일 #퇴근요정]
+[27/43] Processing: 한국경제신문 30분 만에 읽기 | 20260203🌞#모닝루틴 | 아침 8시 라이브
+[28/43] Processing: 주식 금 은 환율 가상자산 모두 초토화 [2월2일 #퇴근요정]
+[29/43] Processing: 한국경제신문 30분 만에 읽기 | 20260202🌞#모닝루틴 | 아침 8시 라이브
+[30/43] Processing: 트럼프 돌발행동에도 미국 경제가 버티는 이유 | 키워드요점정리
+[32/43] Processing: 90만원 안착한 SK하이닉스 [1월30일 #퇴근요정]
+[34/43] Processing: 한국경제신문 30분 만에 읽기 | 20260130🌞#모닝루틴 | 아침 8시 라이브
+[35/43] Processing: 코스닥, 전세계 증시 상승률 1등 [1월29일 #퇴근요정]
+[36/43] Processing: 한국경제신문 30분 만에 읽기 | 20260129🌞#모닝루틴 | 아침 8시 라이브
+[37/43] Processing: 하루 만에 시총 4조 벌크업된 에코프로 [1월28일 #퇴근요정]
+[38/43] Processing: 한국경제신문 30분 만에 읽기 | 20260128🌞#모닝루틴 | 아침 8시 라이브
+[39/43] Processing: 80만원 된 SK하이닉스ㅣ한은이 13년째 금 안 사는 이유 [1월27일 #퇴근요정]
+[40/43] Processing: 한국경제신문 30분 만에 읽기 | 20260127🌞#모닝루틴 | 아침 8시 라이브
+[41/43] Processing: 대통령 한마디에 중복상장 포기한 LS ㅣ 엔화 초강세에 환율 25원 급락 [1월26일 #퇴근요정]
+[42/43] Processing: 한국경제신문 30분 만에 읽기 | 20260126🌞#모닝루틴 | 아침 8시 라이브
+[43/43] Processing: 투자를 고민하는 여러분께 드리는 선물 | 키워드요점정리
+Done!
+HKKoreaApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+Processing mk_crawler...
+/Users/kimkyungho/app01/mk_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+  > 로컬 JSON에서 39개의 기존 데이터를 불러왔습니다.
+  > Searching for all videos since 2026-01-23T20:28:21Z...
+  > API returned 50 items in this batch. (Total so far: 50)
+  > [DEBUG] YouTube API returned total 50 videos.
+[1/50] Processing: [홍장원의 불앤베어] 트럼프, 글로벌 관세율 15%로 올렸다. 애크먼과 드러켄밀러, 올해는 누가 이길 것인가 (05mYHjg7GDk)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [SUCCESS] Bypassed block using yt-dlp strategy!
+  > [OK] Transcript found (Length: 3744). Summarizing...
+[2/50] Processing: "당신이 안 갈수록 돈 번다" 미국 헬스장 사실 보험업인 이유 | 홍키자의 美쿡 | 홍성용 특파원 (kpiUqeVEJpY)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 32s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 60s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [OK] Audio downloaded (9050KB). Uploading to Gemini...
+[3/50] Processing: [어바웃 뉴욕] "카페 메뉴판마다 프로틴 라떼" 미국 소비를 다시 쓰는 단백질 붐 | 길금희 특파원 (o6p5aC6pHdY)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 30s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 62s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [OK] Audio downloaded (16054KB). Uploading to Gemini...
+[4/50] Processing: [홍장원의 불앤베어] 트럼프 관세 위법판결! 증시가 선방한 이유 (hJDm7rcFo4A)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 31s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 66s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [OK] Audio downloaded (4140KB). Uploading to Gemini...
+[10/50] Processing: 피그마, 강력실적&컨센서스에 급등ㅣ美, 토요일까지 이란 공격 준비 완료ㅣ영업정지 피한 쿠팡, 7% 상승ㅣ홍키자의 매일뉴욕 (Hedm_111rNY)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 33s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 64s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for Hedm_111rNY
+[14/50] Processing: 12월 내구재 전년비 감소, But 깜짝 성과ㅣ금 가격 5000불 밑돈 4978불ㅣ모건스탠리, 팔로알토 목표가 223달러로 하향ㅣ홍키자의 매일뉴욕 (XmTYuqfwVRM)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 30s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 62s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for XmTYuqfwVRM
+[29/50] Processing: 신규실업수당 청구 227K, 예상치 상회ㅣ트럼프 ,국방부에 석탄화력 전력 구매 행정명령ㅣJP모건, 버티브 목표가 $305로 상향ㅣ홍키자의 매일뉴욕 (01YR_Iipi_s)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 37s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 65s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for 01YR_Iipi_s
+[32/50] Processing: 1월 비농업 고용 13만개, 예상치 2배 늘어ㅣ버티브 수주잔고 2배 실적, 주가 급등ㅣ모건스탠리, 마이크론 목표가 450달러로 상향ㅣ홍키자의 매일뉴욕 (n0o8B18y7Vw)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 34s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: ffmpeg not found. The downloaded format may not be the best available. Installing ffmpeg is strongly recommended: https://github.com/yt-dlp/yt-dlp#dependencies
+WARNING: The extractor specifie
+  > [WAIT] Both methods failed. Retrying in 63s...
+--- 업데이트 시작: 2026-02-22 21:16:56 ---
+Pulling latest changes from GitHub...
+From https://github.com/kyunghokim1895/app01
+   d0432f0..550f2db  main       -> origin/main
+hint: You have divergent branches and need to specify how to reconcile them.
+hint: You can do so by running one of the following commands sometime before
+hint: your next pull:
+hint:
+hint:   git config pull.rebase false  # merge
+hint:   git config pull.rebase true   # rebase
+hint:   git config pull.ff only       # fast-forward only
+hint:
+hint: You can replace "git config" with "git config --global" to set a default
+hint: preference for all repositories. You can also pass --rebase, --no-rebase,
+hint: or --ff-only on the command line to override the configured default per
+hint: invocation.
+fatal: Need to specify how to reconcile divergent branches.
+Processing crawler...
+/Users/kimkyungho/app01/crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+  > 로컬 JSON에서 209개의 기존 데이터를 불러왔습니다.
+  > API returned 50 items in this batch. (Total so far: 50)
+  > [DEBUG] YouTube API returned total 50 videos.
+[1/50] Processing: "트럼프가 손 내밀었다"…두산에너빌리티, 원전 115조 수혜 폭발 (BPKEituSp7U)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for information on installing the required dependencies
+ERROR: Unable to download video subtitles for 'ko': HTTP Error 429: Too Many Requests
+
+  > [WAIT] Both methods failed. Retrying in 35s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for information on installing the required dependencies
+ERROR: Unable to download video subtitles for 'ko': HTTP Error 429: Too Many Requests
+
+  > [WAIT] Both methods failed. Retrying in 61s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [OK] Audio downloaded (3714KB). Uploading to Gemini...
+[2/50] Processing: 美 애리조나주, 리플 비축 선언…20달러 직행 시간문제 (FDWZmNe0rZE)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for information on installing the required dependencies
+ERROR: Unable to download video subtitles for 'ko': HTTP Error 429: Too Many Requests
+
+  > [WAIT] Both methods failed. Retrying in 36s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for information on installing the required dependencies
+ERROR: Unable to download video subtitles for 'ko': HTTP Error 429: Too Many Requests
+
+  > [WAIT] Both methods failed. Retrying in 65s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [OK] Audio downloaded (1324KB). Uploading to Gemini...
+[32/50] Processing: 26만전자 확정? 삼성 HBM4 세계 최초 출하! 엔비디아, 이재용에 매달리는 진짜 이유! 절대 팔지 마세요 (zRMJNW0B3R0)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for information on installing the required dependencies
+ERROR: Unable to download video subtitles for 'ko': HTTP Error 429: Too Many Requests
+
+  > [WAIT] Both methods failed. Retrying in 31s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for information on installing the required dependencies
+ERROR: Unable to download video subtitles for 'ko': HTTP Error 429: Too Many Requests
+
+  > [WAIT] Both methods failed. Retrying in 66s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [OK] Audio downloaded (3529KB). Uploading to Gemini...
+
+Done! Saved 212 summaries to ../SentvSummaryApp/src/services/data.json
+Waiting 57 seconds before next app...
+SentvSummaryApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+Processing hk_korea_crawler...
+/Users/kimkyungho/app01/hk_korea_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+--- 업데이트 시작: 2026-02-22 22:00:47 ---
+Pulling latest changes from GitHub...
+Already up to date.
+Processing crawler...
+/Users/kimkyungho/app01/crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+  > 로컬 JSON에서 212개의 기존 데이터를 불러왔습니다.
+  > API returned 50 items in this batch. (Total so far: 50)
+  > [DEBUG] YouTube API returned total 50 videos.
+
+Done! Saved 212 summaries to ../SentvSummaryApp/src/services/data.json
+Waiting 33 seconds before next app...
+SentvSummaryApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+Processing hk_korea_crawler...
+/Users/kimkyungho/app01/hk_korea_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+[1/25] Processing: 한국경제신문 30분 만에 읽기 | 20260223🌞#모닝루틴 | 아침 8시 라이브
+[2/25] Processing: 한국경제신문 30분 만에 읽기 | 20260220🌞#모닝루틴 | 아침 8시 라이브
+[3/25] Processing: 한국경제신문 30분 만에 읽기 | 20260219🌞#모닝루틴 | 아침 8시 라이브
+[9/25] Processing: 한국경제신문 30분 만에 읽기 | 20260213🌞#모닝루틴 | 아침 8시 라이브
+[10/25] Processing: LG전자 희망고문, 하루 만인가요? [2월12일 #퇴근요정]
+[11/25] Processing: 한국경제신문 30분 만에 읽기 | 20260212🌞#모닝루틴 | 아침 8시 라이브
+[12/25] Processing: 지난주 악몽 지나갔나요, 이젠 매물 소화 국면 [2월11일 #퇴근요정]
+[13/25] Processing: 한국경제신문 30분 만에 읽기 | 20260211🌞#모닝루틴 | 아침 8시 라이브
+[14/25] Processing: 다시 혼돈의 증시, 어려워지는 투자법 [2월10일 #퇴근요정]
+[15/25] Processing: 한국경제신문 30분 만에 읽기 | 20260210🌞#모닝루틴 | 아침 8시 라이브
+[16/25] Processing: 4만% 급등한 코스닥 주식 알고보니.. [2월9일 #퇴근요정]
+[17/25] Processing: 한국경제신문 30분 만에 읽기 | 20260209🌞#모닝루틴 | 아침 8시 라이브
+[18/25] Processing: 또 시장 덮친 공포, 검은 금요일 [2월6일 #퇴근요정]
+[20/25] Processing: 한국경제신문 30분 만에 읽기 | 20260206🌞#모닝루틴 | 아침 8시 라이브
+[21/25] Processing: 한국경제신문 30분 만에 읽기 | 20260205🌞#모닝루틴 | 아침 8시 라이브
+[22/25] Processing: 국민주식 삼성전자 시총 1000조 돌파 [2월4일 #퇴근요정]
+[23/25] Processing: 한국경제신문 30분 만에 읽기 | 20260204🌞#모닝루틴 | 아침 8시 라이브
+[24/25] Processing: 7%나 급등한 코스피, 귀금속 값도 진정 [2월3일 #퇴근요정]
+Done!
+Waiting 34 seconds before next app...
+HKKoreaApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+Processing mk_crawler...
+/Users/kimkyungho/app01/mk_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+  > 로컬 JSON에서 39개의 기존 데이터를 불러왔습니다.
+  > Searching for all videos since 2026-01-23T22:29:13Z...
+  > API returned 50 items in this batch. (Total so far: 50)
+  > [DEBUG] YouTube API returned total 50 videos.
+[10/50] Processing: 피그마, 강력실적&컨센서스에 급등ㅣ美, 토요일까지 이란 공격 준비 완료ㅣ영업정지 피한 쿠팡, 7% 상승ㅣ홍키자의 매일뉴욕 (Hedm_111rNY)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 31s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 63s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for Hedm_111rNY
+[14/50] Processing: 12월 내구재 전년비 감소, But 깜짝 성과ㅣ금 가격 5000불 밑돈 4978불ㅣ모건스탠리, 팔로알토 목표가 223달러로 하향ㅣ홍키자의 매일뉴욕 (XmTYuqfwVRM)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 39s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 61s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for XmTYuqfwVRM
+[29/50] Processing: 신규실업수당 청구 227K, 예상치 상회ㅣ트럼프 ,국방부에 석탄화력 전력 구매 행정명령ㅣJP모건, 버티브 목표가 $305로 상향ㅣ홍키자의 매일뉴욕 (01YR_Iipi_s)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 32s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 65s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for 01YR_Iipi_s
+[32/50] Processing: 1월 비농업 고용 13만개, 예상치 2배 늘어ㅣ버티브 수주잔고 2배 실적, 주가 급등ㅣ모건스탠리, 마이크론 목표가 450달러로 상향ㅣ홍키자의 매일뉴욕 (n0o8B18y7Vw)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 30s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 67s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for n0o8B18y7Vw
+[35/50] Processing: 美 12월 소매판매 2.43%ㅣ코카콜라 매출&가이던스 기대치 하회ㅣ스포티파이 순이익 125% 급증ㅣ홍키자의 매일뉴욕 (AR2cs3dP_V8)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 31s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 68s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for AR2cs3dP_V8
+[37/50] Processing: “예측시장의 금융상품화, 전통 스포츠 베팅이 주춤하다?” #shorts (KysqG6KvQqQ)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 38s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 62s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [OK] Audio downloaded (1580KB). Uploading to Gemini...
+[38/50] Processing: 노보노, 힘스앤허스 알약 철회로 주가 상승ㅣ일라이릴리, 테라퓨릭스 전격 인수ㅣ울프리서치, 로빈후드 투자의견 상향ㅣ홍키자의 매일뉴욕 (AuvzAwC9UHA)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 30s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 66s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for AuvzAwC9UHA
+[46/50] Processing: 비트코인 69.5K도 붕괴ㅣ신규실업수당 예측치 상회ㅣ퀄컴 낮은 가이던스, 주가급락ㅣ홍키자의 매일뉴욕 (Z77xijTZO6A)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 30s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 64s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for Z77xijTZO6A
+[49/50] Processing: 텍사스인스트루먼트, 실리콘랩스 인수ㅣ금 반등, 5000달러 재돌파ㅣ우버 고성장 실적, EPS는 미스 ㅣ홍키자의 매일뉴욕 (0_-pbkcGkjw)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 31s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: WARNING: The extractor specified to use impersonation for this download, but no impersonate target is available. If you encounter errors, then see  https://github.com/yt-dlp/yt-dlp#impersonation  for 
+  > [WAIT] Both methods failed. Retrying in 66s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ERROR] All summarization methods failed for 0_-pbkcGkjw
+
+Done! Saved 40 summaries to ../MKSummaryApp/src/services/data.json
+Waiting 38 seconds before next app...
+MKSummaryApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+Processing hk_global_crawler...
+/Users/kimkyungho/app01/hk_global_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+[1/50] Processing: 커져가는 사모대출 불안..하지만 금융위기는 걱정 없다? | 월가백브리핑
+[2/50] Processing: 관세 위헌 맞은 트럼프..멈출까, 더 때릴까 | 월가백브리핑
+[7/50] Processing: [김현석의 월스트리트나우-2월20일] AI 공포 외에 새로 등장한 위협..전쟁, 금융위기
+[9/50] Processing: 알면 돈이 된다! A부터 Z까지 중국 경제 몰아보기 | 김은정의 베이징나우
+[10/50] Processing: [김현석의 월스트리트나우-2월19일] '금리 인상' 매파의 반란..AI 공포 완화됐지만 빅테크 투자 줄인다?
+[13/50] Processing: [김현석의 월스트리트나우-2월18일] 계속되는 'AI 공포'..소프트웨어 내리고, 하드웨어 오르고
+[14/50] Processing: [김종학의 뉴욕, 지금-2월18일] 미-이란 2차 협상 | 미중 AI 기술 경쟁 가속 | 드러켄 밀러 쿠팡 추가 구매 | 종목(아마존, 마이크론, 애플, 유나이티드헬스)
+[20/50] Processing: [김현석의 월스트리트나우-2월14일] 고용, 물가 '골디락스', Mag 7은 계속 부진.."구글 좋고, 테슬라 별로"
+[21/50] Processing: [김종학의 뉴욕, 지금-2월14일] 6월 금리 인하 확률 85%로 상승 | 기술주 또 차익실현 중 | 종목(코인베이스, 드래프트킹스, 어플라이드 머티리얼즈, 엔비디아, 테슬라)
+[22/50] Processing: [빈난새의 개장전요것만-2월13일] 올해 3번 인하 등장 | 트럼프 철강관세 축소 검토 | 갑자기 저승사자 된 AI | AMAT ANET 코인베이스 리비안 더치브로 릴리 비트마인
+[23/50] Processing: [김현석의 브레이킹 뉴스] 1월 소비자물가지수(CPI) 발표! 2월 13일 오후 10시 30분 L.I.V.E
+[26/50] Processing: 실물 경제의 역습, 투자법이 달라졌다 | 이런 장에선 무엇을 사나 | 빈난새의 빈틈없이월가
+[27/50] Processing: [김현석의 월스트리트나우-2월13일] '뭐가 터질지 모른다' 확산되는 AI 공포..AI 상관없는 애플도 -5%
+[29/50] Processing: [빈난새의 개장전요것만-2월12일] 칩 폭등에 마진 미스 속출 | 중국 AI 맹추격 | CPI 프리뷰 | 시스코 샌디스크 네비우스 에퀴닉스 앱러빈 넥스트파워 SMR 맥도날드 애플
+[30/50] Processing: 양육비만 1인당 GDP의 6.3배…출산 손사래치는 중국 | 김은정의 베이징나우
+[31/50] Processing: [김현석의 월스트리트나우-2월12일] 믿기 어렵게 '좋은' 고용..워시가 가장 싫어한다? | 7000 못넘는 이유 이것
+[32/50] Processing: [김종학의 뉴욕, 지금-2월12일] 너무 강한 고용..힘 빠진 6월 인하론? | 관세로 감당 못한다..불어난 재정적자 전망 | 종목(마이크론, 메타, 버티브홀딩스, 유니티)
+[33/50] Processing: [빈난새의 개장전요것만-2월11일] '걱정보단' 좋은 고용 | 마이크론 대폭 상향 | 요즘 변동성 본질은 순환매 | 버티브 센트러스 클라우드플레어 팔란티어 로빈후드 ASTS 모더나
+[34/50] Processing: [김현석의 브레이킹 뉴스] 1월 고용보고서 발표! 2월 11일 오후 10시 30분 L.I.V.E
+[36/50] Processing: [김현석의 월스트리트나우-2월11일] 고용 이상? 백악관 또 경고..'AI 폭탄' 또 터졌다, SW 이어 금융주 폭격
+[38/50] Processing: [빈난새의 개장전요것만-2월10일] "반도체 관세, 빅테크 제외" | 소프트웨어 바닥? 월가픽은 | 트럼프 "15% 성장가능" | 코카콜라 마이크론 스포티파이 캐터필러 테슬라 인텔
+[39/50] Processing: 지수 뒤에서 움직이는 알고리즘, 헤지펀드, 레버리지ETF...요즘 롤러코스터 장세의 이유 | 빈난새의 빈틈없이월가
+[40/50] Processing: [김현석의 월스트리트나우-2월10일] 오픈AI 돌아온다? 10% 폭등한 오라클..해싯의 고용 악화 경고
+[42/50] Processing: [빈난새의 개장전요것만-2월9일] 오픈AI 성장 회복 | 엔화 강세, 코인 하락 | 구글 $150억 부채 발행 | 노보, 힘스 고소 | 앱러빈 로빈후드 테라울프 일라이릴리 크로거
+[43/50] Processing: 美 핵심광물 무역블록 참여, 한국은 왜 망설일까 | 이상은의 워싱턴나우
+[44/50] Processing: 망가진 암호화폐 시장..모든 게 워시 때문이었나 | 월가백브리핑
+[45/50] Processing: "묻고 더블로 가!"..AI 군비경쟁 | 월가백브리핑
+[47/50] Processing: [김현석의 월스트리트나우-2월7일] "정말 9% 내릴 실적? "저가 매수 급반등..IGV 살 때 76%
+[49/50] Processing: [빈난새의 개장전요것만-2월6일] 저가매수 유입, 그래도 조심해야할 이유 | 아마존 목표가 줄하향 | 엔비디아 마이크론 블룸에너지 아이렌 퍼스트솔라 레딧 로블록스 힘스 팔란티어
+Done!
+Waiting 49 seconds before next app...
+HKGlobalApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+Processing jipconomy_crawler...
+/Users/kimkyungho/app01/jipconomy_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+--- 업데이트 시작: 2026-02-23 00:00:00 ---
+Pulling latest changes from GitHub...
+Already up to date.
+Processing crawler...
+Traceback (most recent call last):
+  File "/Users/kimkyungho/app01/crawler/processor.py", line 10, in <module>
+    from youtube_transcript_api import YouTubeTranscriptApi
+ModuleNotFoundError: No module named 'youtube_transcript_api'
+Waiting 55 seconds before next app...
+SentvSummaryApp/src/services/data.json: 변경 사항 없음
+Processing hk_korea_crawler...
+Traceback (most recent call last):
+  File "/Users/kimkyungho/app01/hk_korea_crawler/processor.py", line 10, in <module>
+    from youtube_transcript_api import YouTubeTranscriptApi
+ModuleNotFoundError: No module named 'youtube_transcript_api'
+Waiting 54 seconds before next app...
+HKKoreaApp/src/services/data.json: 변경 사항 없음
+Processing mk_crawler...
+Traceback (most recent call last):
+  File "/Users/kimkyungho/app01/mk_crawler/processor.py", line 10, in <module>
+    from youtube_transcript_api import YouTubeTranscriptApi
+ModuleNotFoundError: No module named 'youtube_transcript_api'
+Waiting 34 seconds before next app...
+MKSummaryApp/src/services/data.json: 변경 사항 없음
+Processing hk_global_crawler...
+Traceback (most recent call last):
+  File "/Users/kimkyungho/app01/hk_global_crawler/processor.py", line 10, in <module>
+    from youtube_transcript_api import YouTubeTranscriptApi
+ModuleNotFoundError: No module named 'youtube_transcript_api'
+Waiting 36 seconds before next app...
+HKGlobalApp/src/services/data.json: 변경 사항 없음
+Processing jipconomy_crawler...
+Traceback (most recent call last):
+  File "/Users/kimkyungho/app01/jipconomy_crawler/processor.py", line 10, in <module>
+    from youtube_transcript_api import YouTubeTranscriptApi
+ModuleNotFoundError: No module named 'youtube_transcript_api'
+Waiting 30 seconds before next app...
+JipconomyApp/src/services/data.json: 변경 사항 없음
+GitHub에 업데이트 푸시 중...
+fatal: could not read Username for 'https://github.com': Device not configured
+GitHub 푸시 완료!
+--- 업데이트 완료: 2026-02-23 00:03:31 ---
+-------------------------------------------
+[1/27] Processing: 아파트가 햇빛을 포기한 이유
+[2/27] Processing: 언젠가 새 아파트로 바뀔 곳들 | 당장! 임장 몰아보기
+[3/27] Processing: 부동산뉴스 총정리📝 임대사업자 대출 만기 연장 어려워진다 / 전형진 기자
+[4/27] Processing: 재개발/재건축 완전정복 | 집코노미 타임즈 (2배속 권장)
+[5/27] Processing: 긁지 않은 복권들 | 당장! 임장 몰아보기
+[6/27] Processing: 세상에 이런 곳이.zip | 총총견문록 몰아보기
+[7/27] Processing: 이게 아파트 뷰라고? | 당장! 임장 몰아보기
+[10/27] Processing: 부동산뉴스 총정리📝 대수술 예고된 임대사업자 정책 / 전형진 기자
+[11/27] Processing: 인구도 줄고 군인도 떠나는 접경도시의 딜레마 | 총총견문록 [4K]
+[12/27] Processing: 흥하는 청약 고르고 망하는 청약 거르는 법 | 흥청망청
+[14/27] Processing: 산이 있었는데요...
+[16/27] Processing: 부동산뉴스 총정리📝 초강력 수단은 뭐가 나올까 / 전형진 기자
+[17/27] Processing: 1·29 대책 모든 예정지에 다녀왔습니다 | 총총견문록 [4K]
+[23/27] Processing: 1·29 공급대책 긴급분석📝 수도권 6만 가구 위치 뜯어보기 / 전형진 기자
+[24/27] Processing: 홍콩 아닙니다.. 심연을 품은 23층짜리 아파트의 반전 | 총총견문록 [4K]
+[26/27] Processing: 잠실 새 대장이 된 아파트 | 당장! 임장 [AD]
+Done!
+Waiting 58 seconds before next app...
+JipconomyApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+GitHub에 업데이트 푸시 중...
+To https://github.com/kyunghokim1895/app01.git
+   579822b..83d458f  main -> main
+GitHub 푸시 완료!
+--- 업데이트 완료: 2026-02-23 00:14:12 ---
+-------------------------------------------

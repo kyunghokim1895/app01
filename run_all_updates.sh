@@ -26,7 +26,7 @@ for crawler_dir in "${(@k)CRAWLERS}"; do
     echo "Processing $crawler_dir..." >> "$LOG_FILE"
     
     cd "$PROJECT_ROOT/$crawler_dir" || continue
-    python3 processor.py >> "$LOG_FILE" 2>&1
+    /Library/Frameworks/Python.framework/Versions/3.11/bin/python3 processor.py >> "$LOG_FILE" 2>&1
     
     # 앱 간 부하 분산을 위한 대기 (30~60초)
     sleep_time=$(( 30 + RANDOM % 31 ))
