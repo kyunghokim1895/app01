@@ -122,7 +122,7 @@ def get_video_list(api_key, channel_id):
                 "videoUrl": f"https://www.youtube.com/watch?v={item['id']['videoId']}"
             })
         next_page_token = response.get("nextPageToken")
-        if not next_page_token or len(videos) >= 20: break
+        if not next_page_token or len(videos) >= 30: break
     return videos
 
 def get_transcript(video_id):
@@ -214,6 +214,9 @@ def main():
         cursor.execute("SELECT id FROM videos WHERE id=?", (v['id'],))
         if cursor.fetchone() or v['id'] in existing_ids: continue
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']}")
+        
+        # 유튜브 부하 분산을 위한 랜덤 대기 (인간처럼 보이게 함)
+        time.sleep(10 + random.random() * 10)
         transcript = get_transcript(v['id'])
         analysis = summarize_with_gemini(transcript) if transcript else summarize_from_audio(v['id'])
         if not analysis: continue

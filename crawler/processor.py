@@ -142,8 +142,8 @@ def get_transcript_via_ytdlp(video_id):
 
 def get_video_list(api_key, channel_id):
     youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-    # 사용자 요청: 정확히 오늘 데이터부터 시작 (과도한 요청 방지)
-    published_after = "2026-02-20T00:00:00Z"
+    # 사용자 요청: 지난 30일간의 데이터를 보강하기 위해 설정 변경
+    published_after = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
     videos = []
     next_page_token = None
     
@@ -173,7 +173,7 @@ def get_video_list(api_key, channel_id):
             })
             
         next_page_token = response.get("nextPageToken")
-        if not next_page_token or len(videos) >= 5: break
+        if not next_page_token or len(videos) >= 30: break
     return videos
 
 def get_transcript(video_id):
@@ -372,7 +372,7 @@ def main():
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']} ({v['id']})")
         
         # 유튜브 부하 분산을 위한 랜덤 대기 (인간처럼 보이게 함)
-        time.sleep(3 + random.random() * 3)
+        time.sleep(10 + random.random() * 10)
             
         # 자막 추출 시도
         transcript = get_transcript(v['id'])
