@@ -1,0 +1,34 @@
+{
+    "apps": [
+        {
+            "name": "SentvSummaryApp",
+            "channel_id": "UC3p-0EWA8OXko2EUDUXAy5w",
+            "json_path": "SentvSummaryApp/src/services/data.json",
+            "db_path": "crawler/summaries.db"
+        },
+        {
+            "name": "JipconomyApp",
+            "channel_id": "UCAVdqlngIAxHtwlCA2hjv3A",
+            "json_path": "JipconomyApp/src/services/data.json",
+            "db_path": "jipconomy_crawler/summaries.db"
+        },
+        {
+            "name": "HKKoreaApp",
+            "channel_id": "UCGCGxsbmG_9nincyI7xypow",
+            "json_path": "HKKoreaApp/src/services/data.json",
+            "db_path": "hk_korea_crawler/summaries.db"
+        },
+        {
+            "name": "MKSummaryApp",
+            "channel_id": "UCIipmgxpUxDmPP-ma3Ahvbw",
+            "json_path": "MKSummaryApp/src/services/data.json",
+            "db_path": "mk_crawler/summaries.db"
+        },
+        {
+            "name": "HKGlobalApp",
+            "channel_id": "UCWskYkV4c4S9D__rsfOl2JA",
+            "json_path": "HKGlobalApp/src/services/data.json",
+            "db_path": "hk_global_crawler/summaries.db"
+        }
+    ]
+}

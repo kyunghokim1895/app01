@@ -187,46 +187,124 @@ def summarize_with_gemini(text):
 def summarize_from_audio(video_id):
     url = f"https://www.youtube.com/watch?v={video_id}"
     audio_path = f"temp_audio_{video_id}.m4a"
-    cmd = ["python3", "-m", "yt_dlp", "-f", "ba[ext=m4a]", "-o", audio_path, "--max-filesize", "20M", "--js-runtimes", "node", "--remote-components", "ejs:github", url]
+    cmd = ["python3", "-m", "yt_dlp", "-f", "ba[ext=m4a]", "-o", audio_path, "--max-filesize", "100M", "--js-runtimes", "node", "--remote-components", "ejs:github", url]
     try:
-        subprocess.run(cmd, check=True, capture_output=True, timeout=180)
+        print(f"      Downloading audio for {video_id}...")
+        subprocess.run(cmd, check=True, capture_output=True, timeout=300)
+        
+        if not os.path.exists(audio_path):
+            print(f"      Audio file not found after download: {audio_path}")
+            return None
+            
+        print(f"      Uploading to Gemini...")
         sample_file = genai.upload_file(path=audio_path, display_name=f"Audio_{video_id}")
+        
+        # Wait for file to be ready
+        while sample_file.state.name == "PROCESSING":
+            time.sleep(2)
+            sample_file = genai.get_file(sample_file.name)
+            
+        print(f"      Generating summary...")
         prompt = "오디오 내용을 1.한글요약(summary), 2.5문장리스트(summaryList), 3.#키워드4개(keywords) JSON으로 작성해줘."
         response = model.generate_content([sample_file, prompt])
+        
         genai.delete_file(sample_file.name)
         os.remove(audio_path)
         return parse_json_from_gemini(response.text)
-    except:
+    except Exception as e:
+        print(f"      Error in summarize_from_audio: {str(e)}")
         if os.path.exists(audio_path): os.remove(audio_path)
     return None
 
 def main():
     init_db()
+    
+    # 1. 기존 JSON 데이터 로드
     existing_data = []
     if os.path.exists(JSON_OUTPUT_PATH):
-        with open(JSON_OUTPUT_PATH, "r", encoding="utf-8") as f: existing_data = json.load(f)
-    existing_ids = {item['id'] for item in existing_data}
-    videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
+        try:
+            with open(JSON_OUTPUT_PATH, "r", encoding="utf-8") as f: existing_data = json.load(f)
+        except: pass
+
+    # 2. DB에서 모든 데이터 읽어서 JSON과 동기화 (누락된 것 방지)
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    new_entries = []
+    cursor.execute("SELECT id, title, summary, summaryList, keywords, publishedAt, videoUrl FROM videos WHERE summary IS NOT NULL AND summary != ''")
+    db_rows = cursor.fetchall()
+    
+    db_data = []
+    for row in db_rows:
+        try:
+            db_data.append({
+                "id": row[0], "title": row[1], "summary": row[2],
+                "summaryList": json.loads(row[3]), "keywords": json.loads(row[4]),
+                "publishedAt": row[5], "videoUrl": row[6]
+            })
+        except: pass
+        
+    # 병합 및 정렬
+    all_data = db_data + existing_data
+    unique_data = {item['id']: item for item in all_data}.values()
+    sorted_data = sorted(unique_data, key=lambda x: x.get('publishedAt', ''), reverse=True)
+    
+    # 동기화된 데이터 저장
+    os.makedirs(os.path.dirname(JSON_OUTPUT_PATH), exist_ok=True)
+    with open(JSON_OUTPUT_PATH, "w", encoding="utf-8") as f:
+        json.dump(sorted_data, f, ensure_ascii=False, indent=2)
+    
+    existing_data = list(unique_data) # 업데이트된 데이터로 갱신
+    existing_ids = {item['id'] for item in existing_data}
+    
+    # 3. 신규 비디오 확인 및 처리
+    videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
+    new_entries_count = 0
+    
     for i, v in enumerate(videos):
-        cursor.execute("SELECT id FROM videos WHERE id=?", (v['id'],))
-        if cursor.fetchone() or v['id'] in existing_ids: continue
+        # 이미 존재하고 요약이 제대로 되어있다면 건너뜀
+        cursor.execute("SELECT summary FROM videos WHERE id=?", (v['id'],))
+        row = cursor.fetchone()
+        if (row and row[0] and len(row[0].strip()) > 0) or v['id'] in existing_ids:
+            continue
+            
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']}")
         
         # 유튜브 부하 분산을 위한 랜덤 대기 (인간처럼 보이게 함)
         time.sleep(10 + random.random() * 10)
         transcript = get_transcript(v['id'])
         analysis = summarize_with_gemini(transcript) if transcript else summarize_from_audio(v['id'])
-        if not analysis: continue
-        cursor.execute("INSERT INTO videos VALUES (?,?,?,?,?,?,?)", (v['id'], v['title'], analysis['summary'], json.dumps(analysis['summaryList'], ensure_ascii=False), json.dumps(analysis['keywords'], ensure_ascii=False), v['publishedAt'], v['videoUrl']))
+        if not analysis or not analysis.get('summary') or not isinstance(analysis['summary'], str) or len(analysis['summary'].strip()) < 10:
+            print(f"   => Failed to get valid summary for {v['id']}")
+            continue
+            
+        cursor.execute("REPLACE INTO videos VALUES (?,?,?,?,?,?,?)", (v['id'], v['title'], analysis['summary'], json.dumps(analysis['summaryList'], ensure_ascii=False), json.dumps(analysis['keywords'], ensure_ascii=False), v['publishedAt'], v['videoUrl']))
         conn.commit()
-        new_entries.append({"id": v['id'], "title": v['title'], "summary": analysis['summary'], "summaryList": analysis['summaryList'], "keywords": analysis['keywords'], "publishedAt": v['publishedAt'], "videoUrl": v['videoUrl']})
+        
+        # 실시간 JSON 업데이트
+        new_item = {"id": v['id'], "title": v['title'], "summary": analysis['summary'], "summaryList": analysis['summaryList'], "keywords": analysis['keywords'], "publishedAt": v['publishedAt'], "videoUrl": v['videoUrl']}
+        
+        current_data = []
+        if os.path.exists(JSON_OUTPUT_PATH):
+            try:
+                with open(JSON_OUTPUT_PATH, "r", encoding="utf-8") as f: current_data = json.load(f)
+            except: pass
+            
+        all_data = [new_item] + current_data
+        unique_data = {item['id']: item for item in all_data}.values()
+        sorted_data = sorted(unique_data, key=lambda x: x.get('publishedAt', ''), reverse=True)
+        
+        os.makedirs(os.path.dirname(JSON_OUTPUT_PATH), exist_ok=True)
+        with open(JSON_OUTPUT_PATH, "w", encoding="utf-8") as f:
+            json.dump(sorted_data, f, ensure_ascii=False, indent=2)
+            
+        print(f"      Successfully saved and updated JSON for {v['id']}")
         time.sleep(5)
     conn.close()
-    os.makedirs(os.path.dirname(JSON_OUTPUT_PATH), exist_ok=True)
-    with open(JSON_OUTPUT_PATH, "w", encoding="utf-8") as f: json.dump(new_entries + existing_data, f, ensure_ascii=False, indent=2)
+    
+    # 잔여 임시 파일 정리 (.part 파일 등)
+    for f in glob.glob("temp_audio_*"):
+        try: os.remove(f)
+        except: pass
+        
     print("Done!")
 
 if __name__ == "__main__":

@@ -825,3 +825,351 @@ To https://github.com/kyunghokim1895/app01.git
 GitHub 푸시 완료!
 --- 업데이트 완료: 2026-02-23 00:14:12 ---
 -------------------------------------------
+--- 업데이트 시작: 2026-02-23 12:02:17 ---
+Pulling latest changes from GitHub...
+fatal: unable to access 'https://github.com/kyunghokim1895/app01.git/': Could not resolve host: github.com
+Processing crawler...
+/Users/kimkyungho/app01/crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+  > 로컬 JSON에서 212개의 기존 데이터를 불러왔습니다.
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/httplib2/__init__.py", line 1369, in _conn_request
+    conn.connect()
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/httplib2/__init__.py", line 1145, in connect
+    address_info = socket.getaddrinfo(host, port, 0, socket.SOCK_STREAM)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/socket.py", line 962, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/kimkyungho/app01/crawler/processor.py", line 433, in <module>
+    main()
+  File "/Users/kimkyungho/app01/crawler/processor.py", line 355, in main
+    videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kimkyungho/app01/crawler/processor.py", line 160, in get_video_list
+    response = request.execute()
+               ^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/googleapiclient/_helpers.py", line 130, in positional_wrapper
+    return wrapped(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/googleapiclient/http.py", line 923, in execute
+    resp, content = _retry_request(
+                    ^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/googleapiclient/http.py", line 222, in _retry_request
+    raise exception
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/googleapiclient/http.py", line 191, in _retry_request
+    resp, content = http.request(uri, method, *args, **kwargs)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/httplib2/__init__.py", line 1727, in request
+    (response, content) = self._request(
+                          ^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/httplib2/__init__.py", line 1447, in _request
+    (response, content) = self._conn_request(conn, request_uri, method, body, headers)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/httplib2/__init__.py", line 1376, in _conn_request
+    raise ServerNotFoundError("Unable to find the server at %s" % conn.host)
+httplib2.error.ServerNotFoundError: Unable to find the server at youtube.googleapis.com
+Waiting 30 seconds before next app...
+SentvSummaryApp/src/services/data.json: 변경 사항 없음
+Processing hk_korea_crawler...
+/Users/kimkyungho/app01/hk_korea_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+[13/43] Processing: 한국경제신문 30분 만에 읽기 | 20260211🌞#모닝루틴 | 아침 8시 라이브
+      Downloading audio for FZ12nJYXBaU...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_FZ12nJYXBaU.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=FZ12nJYXBaU']' returned non-zero exit status 1.
+   => Failed to get valid summary for FZ12nJYXBaU
+[15/43] Processing: 한국경제신문 30분 만에 읽기 | 20260210🌞#모닝루틴 | 아침 8시 라이브
+      Downloading audio for A9aS9d3B80U...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_A9aS9d3B80U.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=A9aS9d3B80U']' returned non-zero exit status 1.
+   => Failed to get valid summary for A9aS9d3B80U
+[17/43] Processing: 한국경제신문 30분 만에 읽기 | 20260209🌞#모닝루틴 | 아침 8시 라이브
+      Downloading audio for FJffKzGOvWc...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_FJffKzGOvWc.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=FJffKzGOvWc']' returned non-zero exit status 1.
+   => Failed to get valid summary for FJffKzGOvWc
+[18/43] Processing: 또 시장 덮친 공포, 검은 금요일 [2월6일 #퇴근요정]
+      Downloading audio for AcoKxbPHwDw...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_AcoKxbPHwDw.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=AcoKxbPHwDw']' returned non-zero exit status 1.
+   => Failed to get valid summary for AcoKxbPHwDw
+[19/43] Processing: 해수부 담당자가 밝힌 '심해 바이오'의 진짜 가치 | 딥코노미
+      Downloading audio for jj8uHMPGeF8...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_jj8uHMPGeF8.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=jj8uHMPGeF8']' returned non-zero exit status 1.
+   => Failed to get valid summary for jj8uHMPGeF8
+[21/43] Processing: 개인 6.7조 매수, 외국인은 5조 매도 [2월5일 #퇴근요정]
+      Downloading audio for f_mhRugYYg8...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_f_mhRugYYg8.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=f_mhRugYYg8']' returned non-zero exit status 1.
+   => Failed to get valid summary for f_mhRugYYg8
+[23/43] Processing: 국민주식 삼성전자 시총 1000조 돌파 [2월4일 #퇴근요정]
+      Downloading audio for XZc66qyGgLE...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_XZc66qyGgLE.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=XZc66qyGgLE']' returned non-zero exit status 1.
+   => Failed to get valid summary for XZc66qyGgLE
+[25/43] Processing: 7%나 급등한 코스피, 귀금속 값도 진정 [2월3일 #퇴근요정]
+      Downloading audio for IBGCl5bY6D8...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_IBGCl5bY6D8.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=IBGCl5bY6D8']' returned non-zero exit status 1.
+   => Failed to get valid summary for IBGCl5bY6D8
+[30/43] Processing: 트럼프 돌발행동에도 미국 경제가 버티는 이유 | 키워드요점정리
+      Downloading audio for TRnR8t8AJQM...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_TRnR8t8AJQM.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=TRnR8t8AJQM']' returned non-zero exit status 1.
+   => Failed to get valid summary for TRnR8t8AJQM
+[32/43] Processing: 90만원 안착한 SK하이닉스 [1월30일 #퇴근요정]
+      Downloading audio for Ni1IOGuD6v8...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_Ni1IOGuD6v8.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=Ni1IOGuD6v8']' returned non-zero exit status 1.
+   => Failed to get valid summary for Ni1IOGuD6v8
+[34/43] Processing: 한국경제신문 30분 만에 읽기 | 20260130🌞#모닝루틴 | 아침 8시 라이브
+      Downloading audio for N8e9U8rTlEM...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_N8e9U8rTlEM.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=N8e9U8rTlEM']' returned non-zero exit status 1.
+   => Failed to get valid summary for N8e9U8rTlEM
+[35/43] Processing: 코스닥, 전세계 증시 상승률 1등 [1월29일 #퇴근요정]
+      Downloading audio for Grq6LdJlucs...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_Grq6LdJlucs.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=Grq6LdJlucs']' returned non-zero exit status 1.
+   => Failed to get valid summary for Grq6LdJlucs
+[36/43] Processing: 한국경제신문 30분 만에 읽기 | 20260129🌞#모닝루틴 | 아침 8시 라이브
+      Downloading audio for bqGpPlpG7Zs...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_bqGpPlpG7Zs.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=bqGpPlpG7Zs']' returned non-zero exit status 1.
+   => Failed to get valid summary for bqGpPlpG7Zs
+[37/43] Processing: 하루 만에 시총 4조 벌크업된 에코프로 [1월28일 #퇴근요정]
+      Downloading audio for WqWw36pxtvM...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_WqWw36pxtvM.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=WqWw36pxtvM']' returned non-zero exit status 1.
+   => Failed to get valid summary for WqWw36pxtvM
+[38/43] Processing: 한국경제신문 30분 만에 읽기 | 20260128🌞#모닝루틴 | 아침 8시 라이브
+      Downloading audio for 5cHXveuLHO4...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_5cHXveuLHO4.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=5cHXveuLHO4']' returned non-zero exit status 1.
+   => Failed to get valid summary for 5cHXveuLHO4
+[39/43] Processing: 80만원 된 SK하이닉스ㅣ한은이 13년째 금 안 사는 이유 [1월27일 #퇴근요정]
+      Downloading audio for b19MzIEmcKk...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_b19MzIEmcKk.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=b19MzIEmcKk']' returned non-zero exit status 1.
+   => Failed to get valid summary for b19MzIEmcKk
+[40/43] Processing: 한국경제신문 30분 만에 읽기 | 20260127🌞#모닝루틴 | 아침 8시 라이브
+      Downloading audio for dc1_lGoZRvo...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_dc1_lGoZRvo.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=dc1_lGoZRvo']' returned non-zero exit status 1.
+   => Failed to get valid summary for dc1_lGoZRvo
+[41/43] Processing: 대통령 한마디에 중복상장 포기한 LS ㅣ 엔화 초강세에 환율 25원 급락 [1월26일 #퇴근요정]
+      Downloading audio for y6HCoPqe1AY...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_y6HCoPqe1AY.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=y6HCoPqe1AY']' returned non-zero exit status 1.
+   => Failed to get valid summary for y6HCoPqe1AY
+[42/43] Processing: 한국경제신문 30분 만에 읽기 | 20260126🌞#모닝루틴 | 아침 8시 라이브
+      Downloading audio for eGAKP1mcmog...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_eGAKP1mcmog.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=eGAKP1mcmog']' returned non-zero exit status 1.
+   => Failed to get valid summary for eGAKP1mcmog
+[43/43] Processing: 투자를 고민하는 여러분께 드리는 선물 | 키워드요점정리
+      Downloading audio for TXpLdM38BYI...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_TXpLdM38BYI.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=TXpLdM38BYI']' returned non-zero exit status 1.
+   => Failed to get valid summary for TXpLdM38BYI
+Done!
+Waiting 47 seconds before next app...
+HKKoreaApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+Processing mk_crawler...
+/Users/kimkyungho/app01/mk_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+  > 로컬 JSON에서 40개의 기존 데이터를 불러왔습니다.
+  > Searching for all videos since 2026-01-24T12:50:57Z...
+  > API returned 50 items in this batch. (Total so far: 50)
+  > [DEBUG] YouTube API returned total 50 videos.
+[10/50] Processing: 피그마, 강력실적&컨센서스에 급등ㅣ美, 토요일까지 이란 공격 준비 완료ㅣ영업정지 피한 쿠팡, 7% 상승ㅣ홍키자의 매일뉴욕 (Hedm_111rNY)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 32s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 63s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ULTIMATE ERROR] Audio analysis failed: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_Hedm_111rNY.m4a', '--max-filesize', '20M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=Hedm_111rNY']' returned non-zero exit status 1.
+  > [ERROR] All summarization methods failed for Hedm_111rNY
+[14/50] Processing: 12월 내구재 전년비 감소, But 깜짝 성과ㅣ금 가격 5000불 밑돈 4978불ㅣ모건스탠리, 팔로알토 목표가 223달러로 하향ㅣ홍키자의 매일뉴욕 (XmTYuqfwVRM)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 32s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 64s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ULTIMATE ERROR] Audio analysis failed: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_XmTYuqfwVRM.m4a', '--max-filesize', '20M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=XmTYuqfwVRM']' returned non-zero exit status 1.
+  > [ERROR] All summarization methods failed for XmTYuqfwVRM
+[29/50] Processing: 신규실업수당 청구 227K, 예상치 상회ㅣ트럼프 ,국방부에 석탄화력 전력 구매 행정명령ㅣJP모건, 버티브 목표가 $305로 상향ㅣ홍키자의 매일뉴욕 (01YR_Iipi_s)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 33s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 65s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ULTIMATE ERROR] Audio analysis failed: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_01YR_Iipi_s.m4a', '--max-filesize', '20M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=01YR_Iipi_s']' returned non-zero exit status 1.
+  > [ERROR] All summarization methods failed for 01YR_Iipi_s
+[32/50] Processing: 1월 비농업 고용 13만개, 예상치 2배 늘어ㅣ버티브 수주잔고 2배 실적, 주가 급등ㅣ모건스탠리, 마이크론 목표가 450달러로 상향ㅣ홍키자의 매일뉴욕 (n0o8B18y7Vw)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 31s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 62s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ULTIMATE ERROR] Audio analysis failed: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_n0o8B18y7Vw.m4a', '--max-filesize', '20M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=n0o8B18y7Vw']' returned non-zero exit status 1.
+  > [ERROR] All summarization methods failed for n0o8B18y7Vw
+[35/50] Processing: 美 12월 소매판매 2.43%ㅣ코카콜라 매출&가이던스 기대치 하회ㅣ스포티파이 순이익 125% 급증ㅣ홍키자의 매일뉴욕 (AR2cs3dP_V8)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 37s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 62s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ULTIMATE ERROR] Audio analysis failed: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_AR2cs3dP_V8.m4a', '--max-filesize', '20M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=AR2cs3dP_V8']' returned non-zero exit status 1.
+  > [ERROR] All summarization methods failed for AR2cs3dP_V8
+[38/50] Processing: 노보노, 힘스앤허스 알약 철회로 주가 상승ㅣ일라이릴리, 테라퓨릭스 전격 인수ㅣ울프리서치, 로빈후드 투자의견 상향ㅣ홍키자의 매일뉴욕 (AuvzAwC9UHA)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 34s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 60s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ULTIMATE ERROR] Audio analysis failed: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_AuvzAwC9UHA.m4a', '--max-filesize', '20M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=AuvzAwC9UHA']' returned non-zero exit status 1.
+  > [ERROR] All summarization methods failed for AuvzAwC9UHA
+[46/50] Processing: 비트코인 69.5K도 붕괴ㅣ신규실업수당 예측치 상회ㅣ퀄컴 낮은 가이던스, 주가급락ㅣ홍키자의 매일뉴욕 (Z77xijTZO6A)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 32s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 63s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ULTIMATE ERROR] Audio analysis failed: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_Z77xijTZO6A.m4a', '--max-filesize', '20M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=Z77xijTZO6A']' returned non-zero exit status 1.
+  > [ERROR] All summarization methods failed for Z77xijTZO6A
+[49/50] Processing: 텍사스인스트루먼트, 실리콘랩스 인수ㅣ금 반등, 5000달러 재돌파ㅣ우버 고성장 실적, EPS는 미스 ㅣ홍키자의 매일뉴욕 (0_-pbkcGkjw)
+  > [DEBUG] Using cookie file: www.youtube.com_cookies.txt
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 38s...
+  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...
+  > [FALLBACK ERROR] yt-dlp failed: /Library/Developer/CommandLineTools/usr/bin/python3: No module named yt_dlp
+
+  > [WAIT] Both methods failed. Retrying in 63s...
+  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...
+  > [ULTIMATE ERROR] Audio analysis failed: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_0_-pbkcGkjw.m4a', '--max-filesize', '20M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=0_-pbkcGkjw']' returned non-zero exit status 1.
+  > [ERROR] All summarization methods failed for 0_-pbkcGkjw
+
+Done! Saved 40 summaries to ../MKSummaryApp/src/services/data.json
+Waiting 42 seconds before next app...
+MKSummaryApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+Processing hk_global_crawler...
+/Users/kimkyungho/app01/hk_global_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+[3/25] Processing: 관세 위헌 맞은 트럼프..멈출까, 더 때릴까 | 월가백브리핑
+      Downloading audio for v6XL1_RlqLQ...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_v6XL1_RlqLQ.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=v6XL1_RlqLQ']' returned non-zero exit status 1.
+   => Failed to get valid summary for v6XL1_RlqLQ
+[9/25] Processing: [김종학의 뉴욕, 지금-2월20일] 트럼프 "핵무기 있다면 평화 없다" | 사모 신용, 유동성 리스크 현실화 | 종목(블루아울, 월마트, 디어앤코, 도어대시, 카바나, 클라르나)
+      Downloading audio for 7ZJV44LVgk4...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_7ZJV44LVgk4.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=7ZJV44LVgk4']' returned non-zero exit status 1.
+   => Failed to get valid summary for 7ZJV44LVgk4
+[10/25] Processing: 알면 돈이 된다! A부터 Z까지 중국 경제 몰아보기 | 김은정의 베이징나우
+      Downloading audio for okLTTFRPvXg...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_okLTTFRPvXg.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=okLTTFRPvXg']' returned non-zero exit status 1.
+   => Failed to get valid summary for okLTTFRPvXg
+[11/25] Processing: [김현석의 월스트리트나우-2월19일] '금리 인상' 매파의 반란..AI 공포 완화됐지만 빅테크 투자 줄인다?
+      Downloading audio for 8m4vEnQZ_Ac...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_8m4vEnQZ_Ac.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=8m4vEnQZ_Ac']' returned non-zero exit status 1.
+   => Failed to get valid summary for 8m4vEnQZ_Ac
+[14/25] Processing: [김현석의 월스트리트나우-2월18일] 계속되는 'AI 공포'..소프트웨어 내리고, 하드웨어 오르고
+      Downloading audio for 4NeiZnS-M38...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_4NeiZnS-M38.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=4NeiZnS-M38']' returned non-zero exit status 1.
+   => Failed to get valid summary for 4NeiZnS-M38
+[15/25] Processing: [김종학의 뉴욕, 지금-2월18일] 미-이란 2차 협상 | 미중 AI 기술 경쟁 가속 | 드러켄 밀러 쿠팡 추가 구매 | 종목(아마존, 마이크론, 애플, 유나이티드헬스)
+      Downloading audio for rbFMHGwZvrY...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_rbFMHGwZvrY.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=rbFMHGwZvrY']' returned non-zero exit status 1.
+   => Failed to get valid summary for rbFMHGwZvrY
+[21/25] Processing: [김현석의 월스트리트나우-2월14일] 고용, 물가 '골디락스', Mag 7은 계속 부진.."구글 좋고, 테슬라 별로"
+      Downloading audio for qTmIwG7zCd0...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_qTmIwG7zCd0.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=qTmIwG7zCd0']' returned non-zero exit status 1.
+   => Failed to get valid summary for qTmIwG7zCd0
+[22/25] Processing: [김종학의 뉴욕, 지금-2월14일] 6월 금리 인하 확률 85%로 상승 | 기술주 또 차익실현 중 | 종목(코인베이스, 드래프트킹스, 어플라이드 머티리얼즈, 엔비디아, 테슬라)
+      Downloading audio for ItjwgUSWPcg...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_ItjwgUSWPcg.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=ItjwgUSWPcg']' returned non-zero exit status 1.
+   => Failed to get valid summary for ItjwgUSWPcg
+Done!
+Waiting 43 seconds before next app...
+HKGlobalApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+Processing jipconomy_crawler...
+/Users/kimkyungho/app01/jipconomy_crawler/processor.py:11: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+[12/26] Processing: 흥하는 청약 고르고 망하는 청약 거르는 법 | 흥청망청
+      Downloading audio for h1n2Rhzo430...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_h1n2Rhzo430.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=h1n2Rhzo430']' returned non-zero exit status 1.
+   => Failed to get valid summary for h1n2Rhzo430
+[16/26] Processing: 부동산뉴스 총정리📝 초강력 수단은 뭐가 나올까 / 전형진 기자
+      Downloading audio for KaqhG2spWOo...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_KaqhG2spWOo.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=KaqhG2spWOo']' returned non-zero exit status 1.
+   => Failed to get valid summary for KaqhG2spWOo
+[17/26] Processing: 1·29 대책 모든 예정지에 다녀왔습니다 | 총총견문록 [4K]
+      Downloading audio for rGztU95Jofs...
+      Error in summarize_from_audio: Command '['python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_rGztU95Jofs.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=rGztU95Jofs']' returned non-zero exit status 1.
+   => Failed to get valid summary for rGztU95Jofs
+Done!
+Waiting 40 seconds before next app...
+JipconomyApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+GitHub에 업데이트 푸시 중...
+fatal: could not read Username for 'https://github.com': Device not configured
+GitHub 푸시 완료!
+--- 업데이트 완료: 2026-02-23 13:20:05 ---
+-------------------------------------------
