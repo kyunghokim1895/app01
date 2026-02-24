@@ -125,7 +125,7 @@ def get_transcript(video_id):
             data = transcript.fetch()
             return " ".join([i.get('text', '') for i in data])
         except Exception as e:
-            if "429" in str(e) or "too many requests" in str(e).lower():
+            if "429" in str(e) or "too many requests" in str(e).lower() or "no element found" in str(e).lower():
                 fallback_text = get_transcript_via_ytdlp(video_id)
                 if fallback_text: return fallback_text
                 time.sleep(15)

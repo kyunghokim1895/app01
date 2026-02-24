@@ -152,7 +152,7 @@ def get_transcript(video_id):
             data = transcript.fetch()
             return " ".join([i.get('text', '') for i in data])
         except Exception as e:
-            if "429" in str(e) or "too many requests" in str(e).lower():
+            if "429" in str(e) or "too many requests" in str(e).lower() or "no element found" in str(e).lower():
                 fallback_text = get_transcript_via_ytdlp(video_id)
                 if fallback_text: return fallback_text
                 time.sleep(30)
@@ -205,8 +205,17 @@ def summarize_from_audio(video_id):
             sample_file = genai.get_file(sample_file.name)
             
         print(f"      Generating summary...")
-        prompt = "오디오 내용을 1.한글요약(summary), 2.5문장리스트(summaryList), 3.#키워드4개(keywords) JSON으로 작성해줘."
-        response = model.generate_content([sample_file, prompt])
+        prompt = """오디오 내용을 1.한글요약(summary), 2.5문장리스트(summaryList), 3.#키워드4개(keywords) 포맷으로 분석해줘.
+반드시 아래와 같은 형태의 순수 JSON 객체로만 응답하고, 마크다운(```json 등)이나 다른 설명은 절대 추가하지 마:
+{
+  "summary": "전체 내용 한글 요약",
+  "summaryList": ["핵심 문장 1", "핵심 문장 2", "핵심 문장 3", "핵심 문장 4", "핵심 문장 5"],
+  "keywords": ["#키워드1", "#키워드2", "#키워드3", "#키워드4"]
+}"""
+        response = model.generate_content(
+            [sample_file, prompt],
+            generation_config=genai.types.GenerationConfig(response_mime_type="application/json")
+        )
         
         genai.delete_file(sample_file.name)
         os.remove(audio_path)

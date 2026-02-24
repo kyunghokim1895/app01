@@ -318,16 +318,18 @@ def summarize_from_audio(video_id):
         sample_file = genai.upload_file(path=audio_path, display_name=f"Audio_{video_id}")
         
         # 3. 멀티모달 분석 및 요약
-        prompt = """
-        아래 오디오는 '매경 월가월부'의 투자 뉴스 영상이야. 내용을 매우 주의 깊게 경청하고 다음 형식을 지켜서 한국어로 정리해줘:
-        1. 전체 내용을 아우르는 1~2문장의 짧은 서술형 요약을 작성할 것. (summary 필드)
-        2. 핵심 내용을 5개 문장의 번호 리스트로 작성할 것 (1., 2., 3., 4., 5.) (summaryList 필드)
-        3. 영상과 관련된 핵심 키워드를 #으로 시작하는 태그 4개 정도 뽑아줄 것. (keywords 필드)
-        
-        응답은 반드시 순수 JSON 형식으로만 해야 해.
-        """
-        
-        response = model.generate_content([sample_file, prompt])
+        print(f"      Generating summary...")
+        prompt = """오디오 내용을 1.한글요약(summary), 2.5문장리스트(summaryList), 3.#키워드4개(keywords) 포맷으로 분석해줘.
+반드시 아래와 같은 형태의 순수 JSON 객체로만 응답하고, 마크다운(```json 등)이나 다른 설명은 절대 추가하지 마:
+{
+  "summary": "전체 내용 한글 요약",
+  "summaryList": ["핵심 문장 1", "핵심 문장 2", "핵심 문장 3", "핵심 문장 4", "핵심 문장 5"],
+  "keywords": ["#키워드1", "#키워드2", "#키워드3", "#키워드4"]
+}"""
+        response = model.generate_content(
+            [sample_file, prompt],
+            generation_config=genai.types.GenerationConfig(response_mime_type="application/json")
+        )
         
         # 4. 정리
         genai.delete_file(sample_file.name)
