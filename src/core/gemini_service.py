@@ -128,5 +128,44 @@ def summarize_from_video(model, video_id):
         if os.path.exists(temp_cookie_path): os.remove(temp_cookie_path)
     return None
 
+def summarize_from_metadata(model, title, description):
+    """
+    영상 본문(자막/비디오)을 가져오지 못했을 때, 제목과 상세 설명만으로 요약을 시도합니다.
+    데이터 수집 차단을 우회하기 위한 3단계 폴백입니다.
+    """
+    if not description or len(description.strip()) < 20:
+        # 설명이 너무 짧으면 제목만이라도 활용
+        description = "상세 설명 없음"
+        
+    prompt = f"""
+    아래 유튜브 영상의 제목과 상세 설명을 바탕으로 뉴스 요약을 작성해줘. 
+    영상 본문을 직접 보지 못했으므로, 제공된 텍스트 정보 내에서 가장 핵심적인 내용을 추론해서 작성해야 해.
+
+    제목: {title}
+    상세 설명: {description}
+
+    반드시 아래 JSON 형식으로 응답해:
+    {{
+      "summary": "뉴스 한 줄 요약",
+      "summaryList": ["핵심 포인트 1", "핵심 포인트 2", "핵심 포인트 3"],
+      "keywords": ["키워드1", "키워드2", "키워드3"]
+    }}
+    """
+    
+    try:
+        response = model.generate_content(prompt)
+        text = response.text.strip()
+        if "```json" in text:
+            text = text.split("```json")[1].split("```")[0].strip()
+            
+        import json as py_json
+        data = py_json.loads(text)
+        # Mark it as inferred
+        data['summary'] = "[추론 요약] " + data['summary']
+        return data
+    except Exception as e:
+        print(f"      Error in metadata summary: {str(e)}")
+        return None
+
 # For backward compatibility if needed by other files
 summarize_from_audio = summarize_from_video

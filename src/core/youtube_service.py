@@ -103,6 +103,11 @@ def get_video_list(api_key, channel_id, days=3, max_results=10):
                 if v_id_elem is None or title_elem is None or pub_elem is None:
                     continue
                     
+                # Description parsing (Level 3 Fallback)
+                media_ns = {'media': 'http://search.yahoo.com/mrss/'}
+                desc_elem = entry.find('media:group/media:description', media_ns)
+                description = desc_elem.text if desc_elem is not None else ""
+                
                 video_id = v_id_elem.text
                 title = title_elem.text
                 published = pub_elem.text
@@ -121,6 +126,7 @@ def get_video_list(api_key, channel_id, days=3, max_results=10):
                 videos.append({
                     "id": video_id,
                     "title": html.unescape(title),
+                    "description": description,
                     "publishedAt": published[:10],
                     "videoUrl": f"https://www.youtube.com/watch?v={video_id}"
                 })
