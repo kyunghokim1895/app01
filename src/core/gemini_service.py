@@ -61,14 +61,16 @@ def summarize_from_video(model, video_id):
         ]
         cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
 
-    # worst 해상도를 사용하여 밴드위스 및 용량 최소화
+    # Bypassing strategies: Use mobile clients and specific user-agent
     cmd = [
         sys.executable, "-m", "yt_dlp", 
         "-f", "worst", 
         "-o", video_path, 
         "--max-filesize", "50M", 
-        "--js-runtimes", "node", 
-        "--remote-components", "ejs:github"
+        "--js-runtimes", "node",
+        "--user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+        "--extractor-args", "youtube:player-client=ios,android,web",
+        "--no-check-certificates"
     ]
     if cookies:
         cmd.extend(["--cookies", cookies])
