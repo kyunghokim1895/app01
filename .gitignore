@@ -3,3 +3,9 @@ node_modules/
 android/app/build/
 .env
 summaries.db
+videos.db
+__pycache__/
+*.txt
+*.log
+temp_audio_*
+temp_sub_*
