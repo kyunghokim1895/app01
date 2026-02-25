@@ -79,6 +79,15 @@ def summarize_from_video(model, video_id):
         "--prefer-free-formats",
         "--add-header", "Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
     ]
+    
+    po_token = os.getenv("YOUTUBE_PO_TOKEN")
+    if po_token:
+        try:
+            idx = cmd.index("--extractor-args")
+            cmd[idx+1] = cmd[idx+1] + f";po_token={po_token}"
+        except ValueError:
+            cmd.extend(["--extractor-args", f"youtube:po_token={po_token}"])
+        
     if cookies:
         cmd.extend(["--cookies", cookies])
     cmd.append(url)

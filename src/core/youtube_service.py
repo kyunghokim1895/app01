@@ -39,8 +39,17 @@ def get_transcript_via_ytdlp(video_id):
         "--extractor-args", "youtube:player_client=ios,android,mweb;player_skip=web,canvas,web_embedded",
         "--no-check-certificates",
         "--add-header", "Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-        "-o", temp_prefix,
     ]
+    
+    po_token = os.getenv("YOUTUBE_PO_TOKEN")
+    if po_token:
+        try:
+            idx = cmd.index("--extractor-args")
+            cmd[idx+1] = cmd[idx+1] + f";po_token={po_token}"
+        except ValueError:
+            cmd.extend(["--extractor-args", f"youtube:po_token={po_token}"])
+        
+    cmd.extend(["-o", temp_prefix])
     
     # Try multiple cookie locations relative to current script
     current_dir = os.path.dirname(os.path.abspath(__file__))
