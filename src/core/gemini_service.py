@@ -74,8 +74,7 @@ def summarize_from_video(model, video_id):
         "-o", video_path, 
         "--max-filesize", "50M", 
         "--js-runtimes", "node",
-        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "--extractor-args", "youtube:player_client=tv,android,mweb;player_skip=web,canvas,web_embedded",
+        "--extractor-args", "youtube:player_client=ios,android,mweb;player_skip=web,canvas,web_embedded",
         "--no-check-certificates",
         "--prefer-free-formats",
         "--add-header", "Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"

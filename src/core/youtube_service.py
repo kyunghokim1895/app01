@@ -36,8 +36,7 @@ def get_transcript_via_ytdlp(video_id):
         "--write-subs",
         "--sub-lang", "ko",
         "--js-runtimes", "node",
-        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "--extractor-args", "youtube:player_client=tv,android,mweb;player_skip=web,canvas,web_embedded",
+        "--extractor-args", "youtube:player_client=ios,android,mweb;player_skip=web,canvas,web_embedded",
         "--no-check-certificates",
         "--add-header", "Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
         "-o", temp_prefix,
@@ -146,8 +145,15 @@ def get_transcript(video_id):
             temp_cookie_path = os.path.join(root_dir, "temp_cookies_v2.txt")
             
             if env_cookies:
-                with open(temp_cookie_path, "w") as f: f.write(env_cookies)
-                cookies = temp_cookie_path
+                # Ensure Netscape header exists and remove any leading/trailing whitespace
+                env_cookies = env_cookies.strip()
+                if not env_cookies.startswith("# Netscape"):
+                    env_cookies = "# Netscape HTTP Cookie File\n" + env_cookies
+                try:
+                    with open(temp_cookie_path, "w") as f: f.write(env_cookies)
+                    cookies = temp_cookie_path
+                    print(f"      [DEBUG] Created cookie file for transcript API: {env_cookies[:20]}...")
+                except Exception: pass
             else:
                 possible_cookies = [
                     os.path.join(root_dir, 'cookies.txt'),
