@@ -61,15 +61,15 @@ def summarize_from_video(model, video_id):
         ]
         cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
 
-    # Bypassing strategies: Use mobile clients and specific user-agent
+    # Bypassing strategies: Use 'tv' and 'web_embedded' clients as they often bypass datacenter IP blocks
     cmd = [
         sys.executable, "-m", "yt_dlp", 
         "-f", "worst", 
         "-o", video_path, 
         "--max-filesize", "50M", 
         "--js-runtimes", "node",
-        "--user-agent", "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
-        "--extractor-args", "youtube:player-client=ios,android,web",
+        "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+        "--extractor-args", "youtube:player-client=tv,web_embedded",
         "--no-check-certificates"
     ]
     if cookies:
@@ -81,6 +81,8 @@ def summarize_from_video(model, video_id):
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
         if result.returncode != 0:
             print(f"      yt-dlp error output: {result.stderr}")
+            if "Sign in to confirm you" in result.stderr:
+                print("      [CRITICAL] YouTube blocked this IP or cookie is invalid. Manual cookie refresh is likely needed.")
             if os.path.exists(temp_cookie_path): os.remove(temp_cookie_path)
             return None
         
