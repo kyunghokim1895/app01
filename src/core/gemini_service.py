@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import json
 import re
@@ -37,7 +38,7 @@ def summarize_from_audio(model, video_id):
     url = f"https://www.youtube.com/watch?v={video_id}"
     audio_path = f"temp_audio_{video_id}.m4a"
     # Increased to 100M for long videos
-    cmd = ["python3", "-m", "yt_dlp", "-f", "ba[ext=m4a]", "-o", audio_path, "--max-filesize", "100M", "--js-runtimes", "node", "--remote-components", "ejs:github", url]
+    cmd = [sys.executable, "-m", "yt_dlp", "-f", "ba[ext=m4a]", "-o", audio_path, "--max-filesize", "100M", "--js-runtimes", "node", "--remote-components", "ejs:github", url]
     
     try:
         print(f"      Downloading audio for {video_id}...")

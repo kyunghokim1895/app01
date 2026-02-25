@@ -1,4 +1,5 @@
 import os
+import sys
 import sqlite3
 import json
 import random
@@ -76,7 +77,7 @@ def get_transcript_via_ytdlp(video_id):
     temp_prefix = f"temp_sub_{video_id}"
     
     cmd = [
-        "python3", "-m", "yt_dlp",
+        sys.executable, "-m", "yt_dlp",
         "--skip-download",
         "--write-auto-subs",
         "--write-subs",
@@ -291,15 +292,7 @@ def summarize_from_audio(video_id):
     
     print(f"  > [ULTIMATE FALLBACK] Downloading audio for direct listening analysis...")
     
-    cmd = [
-        "python3", "-m", "yt_dlp",
-        "-f", "ba[ext=m4a]",
-        "-o", audio_path,
-        "--max-filesize", "20M",
-        "--js-runtimes", "node",
-        "--remote-components", "ejs:github",
-        url
-    ]
+    cmd = [sys.executable, "-m", "yt_dlp", "-f", "ba[ext=m4a]", "-o", audio_path, "--max-filesize", "100M", "--js-runtimes", "node", "--remote-components", "ejs:github", url]
     
     try:
         # 1. 오디오 다운로드

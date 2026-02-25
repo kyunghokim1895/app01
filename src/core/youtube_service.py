@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import random
 import subprocess
@@ -29,7 +30,7 @@ def get_transcript_via_ytdlp(video_id):
     url = f"https://www.youtube.com/watch?v={video_id}"
     temp_prefix = f"temp_sub_{video_id}"
     cmd = [
-        "python3", "-m", "yt_dlp",
+        sys.executable, "-m", "yt_dlp",
         "--skip-download",
         "--write-auto-subs",
         "--write-subs",
