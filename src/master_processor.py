@@ -51,7 +51,8 @@ def process_app(app_config, model, youtube_api_key):
             analysis = gemini_service.summarize_with_gemini(model, transcript)
         
         if not analysis:
-            analysis = gemini_service.summarize_from_audio(model, video_id)
+            # RSS + Multimodal 재설계: 오디오 대신 비디오 멀티모달 분석 사용
+            analysis = gemini_service.summarize_from_video(model, video_id)
             
         if not analysis or not analysis.get('summary') or not isinstance(analysis['summary'], str) or len(analysis['summary'].strip()) < 10:
             print(f"      => Failed to get valid summary for {video_id}")

@@ -65,32 +65,72 @@ def get_transcript_via_ytdlp(video_id):
         for f in glob.glob(f"{temp_prefix}*"): os.remove(f)
     return None
 
-def get_video_list(api_key, channel_id, days=30, max_results=30):
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-    published_after = (datetime.now() - timedelta(days=days)).strftime("%Y-%m-%dT%H:%M:%SZ")
+import urllib.request
+import xml.etree.ElementTree as ET
+
+import ssl
+
+def get_video_list(api_key, channel_id, days=3, max_results=10):
+    """
+    유튜브 API 대신 RSS 피드를 사용하여 최신 영상 목록을 가져옵니다.
+    할당량(Quota)을 소모하지 않으며 차단 위험이 낮습니다.
+    """
+    rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
     videos = []
-    next_page_token = None
-    while True:
-        request = youtube.search().list(
-            part="snippet",
-            channelId=channel_id,
-            maxResults=50,
-            order="date",
-            publishedAfter=published_after,
-            pageToken=next_page_token,
-            type="video"
-        )
-        response = request.execute()
-        items = response.get("items", [])
-        for item in items:
-            videos.append({
-                "id": item["id"]["videoId"],
-                "title": html.unescape(item["snippet"]["title"]),
-                "publishedAt": item["snippet"]["publishedAt"][:10],
-                "videoUrl": f"https://www.youtube.com/watch?v={item['id']['videoId']}"
-            })
-        next_page_token = response.get("nextPageToken")
-        if not next_page_token or len(videos) >= max_results: break
+    
+    try:
+        print(f"   [RSS] Fetching feed from {rss_url}...")
+        headers = {'User-Agent': 'Mozilla/5.0'}
+        req = urllib.request.Request(rss_url, headers=headers)
+        
+        # SSL 인증서 문제 우회 (특히 macOS 로컬 환경 대응)
+        context = ssl._create_unverified_context()
+        
+        with urllib.request.urlopen(req, context=context, timeout=20) as response:
+            xml_content = response.read()
+            root = ET.fromstring(xml_content)
+            
+            # Atom Namespace
+            ns = {'ns': 'http://www.w3.org/2005/Atom', 'yt': 'http://www.youtube.com/xml/schemas/2015'}
+            
+            for entry in root.findall('ns:entry', ns):
+                v_id_elem = entry.find('yt:videoId', ns)
+                title_elem = entry.find('ns:title', ns)
+                pub_elem = entry.find('ns:published', ns)
+                
+                if v_id_elem is None or title_elem is None or pub_elem is None:
+                    continue
+                    
+                video_id = v_id_elem.text
+                title = title_elem.text
+                published = pub_elem.text
+                
+                if not video_id or not title or not published:
+                    continue
+                
+                # 날짜 필터링
+                try:
+                    pub_date = datetime.fromisoformat(published.replace('Z', '+00:00'))
+                    if pub_date < datetime.now(pub_date.tzinfo) - timedelta(days=days):
+                        continue
+                except Exception:
+                    continue
+                
+                videos.append({
+                    "id": video_id,
+                    "title": html.unescape(title),
+                    "publishedAt": published[:10],
+                    "videoUrl": f"https://www.youtube.com/watch?v={video_id}"
+                })
+                
+                if len(videos) >= max_results:
+                    break
+                    
+        print(f"   [RSS] Found {len(videos)} recent videos.")
+    except Exception as e:
+        print(f"   [RSS ERROR] Failed to parse RSS feed: {str(e)}")
+        # Fallback to empty list or you could keep old API logic as a very last resort
+        # For now, let's rely on RSS as primary for redesign.
     return videos
 
 def get_transcript(video_id):
