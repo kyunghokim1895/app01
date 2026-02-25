@@ -37,12 +37,38 @@ def summarize_with_gemini(model, text):
 def summarize_from_audio(model, video_id):
     url = f"https://www.youtube.com/watch?v={video_id}"
     audio_path = f"temp_audio_{video_id}.m4a"
-    # Increased to 100M for long videos
-    cmd = [sys.executable, "-m", "yt_dlp", "-f", "ba[ext=m4a]", "-o", audio_path, "--max-filesize", "100M", "--js-runtimes", "node", "--remote-components", "ejs:github", url]
+    
+    # Cookie Handling
+    env_cookies = os.getenv("YOUTUBE_COOKIES")
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    root_dir = os.path.dirname(os.path.dirname(current_dir))
+    temp_cookie_path = os.path.join(root_dir, f"temp_cookies_audio_{video_id}.txt")
+    
+    cookies = None
+    if env_cookies:
+        try:
+            with open(temp_cookie_path, "w") as f: f.write(env_cookies)
+            cookies = temp_cookie_path
+        except Exception: pass
+    else:
+        possible_cookies = [
+            os.path.join(root_dir, 'cookies.txt'),
+            os.path.join(root_dir, 'www.youtube.com_cookies.txt')
+        ]
+        cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
+
+    cmd = [sys.executable, "-m", "yt_dlp", "-f", "ba[ext=m4a]", "-o", audio_path, "--max-filesize", "100M", "--js-runtimes", "node", "--remote-components", "ejs:github"]
+    if cookies:
+        cmd.extend(["--cookies", cookies])
+    cmd.append(url)
     
     try:
         print(f"      Downloading audio for {video_id}...")
-        subprocess.run(cmd, check=True, capture_output=True, timeout=300)
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+        if result.returncode != 0:
+            print(f"      yt-dlp error output: {result.stderr}")
+            if os.path.exists(temp_cookie_path): os.remove(temp_cookie_path)
+            return None
         
         if not os.path.exists(audio_path):
             print(f"      Audio file not found after download: {audio_path}")
@@ -71,8 +97,10 @@ def summarize_from_audio(model, video_id):
         
         genai.delete_file(sample_file.name)
         os.remove(audio_path)
+        if os.path.exists(temp_cookie_path): os.remove(temp_cookie_path)
         return parse_json_from_gemini(response.text)
     except Exception as e:
         print(f"      Error in summarize_from_audio: {str(e)}")
         if os.path.exists(audio_path): os.remove(audio_path)
+        if os.path.exists(temp_cookie_path): os.remove(temp_cookie_path)
     return None
