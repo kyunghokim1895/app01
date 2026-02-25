@@ -2,7 +2,7 @@ name: Daily All News Summary Update
 
 on:
   schedule:
-    - cron: '0 21 * * *' # 매일 한국 시간 오전 6시 (UTC 21:00)
+    - cron: "0 21 * * *" # 매일 한국 시간 오전 6시 (UTC 21:00)
   workflow_dispatch:
 
 jobs:
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Install ffmpeg
         run: |
@@ -29,12 +29,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv
+          pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv
+          python -m pip install -U yt-dlp
 
       - name: Run Master Processor (Update All Apps)
         env:
@@ -43,11 +44,14 @@ jobs:
           YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
         run: |
           python src/master_processor.py --app all
+          echo "==== Check for data modifications ===="
+          git status
 
       - name: Commit and Push changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add .
-          git commit -m "Auto-update all news summaries via Master Processor [$(date +'%Y-%m-%d')]" || echo "No changes to commit"
+          git add "*/src/services/data.json" "*/summaries.db" 2>/dev/null || true
+          git add "crawler/*.db" "hk_global_crawler/*.db" "hk_korea_crawler/*.db" "jipconomy_crawler/*.db" "mk_crawler/*.db" 2>/dev/null || true
+          git commit -m "Auto-update all news summaries via Master Processor [$(date +\"%Y-%m-%d\")]" || echo "No changes to commit"
           git push
