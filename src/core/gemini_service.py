@@ -50,6 +50,9 @@ def summarize_from_video(model, video_id):
     
     cookies = None
     if env_cookies:
+        # Ensure Netscape header exists
+        if not env_cookies.strip().startswith("# Netscape"):
+            env_cookies = "# Netscape HTTP Cookie File\n" + env_cookies
         try:
             with open(temp_cookie_path, "w") as f: f.write(env_cookies)
             cookies = temp_cookie_path
@@ -61,7 +64,7 @@ def summarize_from_video(model, video_id):
         ]
         cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
 
-    # Bypassing strategies: Use 'tv' and 'web_embedded' clients as they often bypass datacenter IP blocks
+    # Bypassing strategies: Use 'tv' and 'android' clients and skip web/canvas which trigger challenges
     cmd = [
         sys.executable, "-m", "yt_dlp", 
         "-f", "worst", 
@@ -69,8 +72,10 @@ def summarize_from_video(model, video_id):
         "--max-filesize", "50M", 
         "--js-runtimes", "node",
         "--user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
-        "--extractor-args", "youtube:player-client=tv,web_embedded",
-        "--no-check-certificates"
+        "--extractor-args", "youtube:player-client=tv,android;player_skip=web,canvas,web_embedded",
+        "--no-check-certificates",
+        "--prefer-free-formats",
+        "--add-header", "Accept-Language: ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
     ]
     if cookies:
         cmd.extend(["--cookies", cookies])
