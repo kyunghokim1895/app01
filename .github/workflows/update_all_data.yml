@@ -51,7 +51,9 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add "*/src/services/data.json" "*/summaries.db" 2>/dev/null || true
-          git add "crawler/*.db" "hk_global_crawler/*.db" "hk_korea_crawler/*.db" "jipconomy_crawler/*.db" "mk_crawler/*.db" 2>/dev/null || true
-          git commit -m "Auto-update all news summaries via Master Processor [$(date +\"%Y-%m-%d\")]" || echo "No changes to commit"
+          # Explicitly add all potential data files
+          git add -f SentvSummaryApp/src/services/data.json MKSummaryApp/src/services/data.json HKKoreaApp/src/services/data.json JipconomyApp/src/services/data.json HKGlobalApp/src/services/data.json 2>/dev/null || true
+          git add -f crawler/summaries.db mk_crawler/summaries.db hk_global_crawler/summaries.db hk_korea_crawler/summaries.db jipconomy_crawler/summaries.db 2>/dev/null || true
+          git add . # Fallback for any other changes
+          git commit -m "Auto-update all news summaries via Master Processor [$(date +'%Y-%m-%d')]" || echo "No changes to commit"
           git push
