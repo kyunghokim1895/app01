@@ -1,7 +1,7 @@
 #!/bin/zsh
 # 전종목 요약 데이터 업데이트 통합 자동화 스크립트
 
-PROJECT_ROOT="/Users/kimkyungho/app01"
+PROJECT_ROOT="/Users/kimkyungho/Developer/app01"
 LOG_FILE="$PROJECT_ROOT/update_log.txt"
 
 echo "--- 업데이트 시작: $(date +'%Y-%m-%d %H:%M:%S') ---" >> "$LOG_FILE"
@@ -9,7 +9,8 @@ echo "--- 업데이트 시작: $(date +'%Y-%m-%d %H:%M:%S') ---" >> "$LOG_FILE"
 # 1. 깃허브에서 최신 상태 가져오기 (멀티 디바이스 동기화)
 echo "Pulling latest changes from GitHub..." >> "$LOG_FILE"
 cd "$PROJECT_ROOT" || exit
-git pull >> "$LOG_FILE" 2>&1
+git config pull.rebase true
+git pull origin $(git rev-parse --abbrev-ref HEAD) >> "$LOG_FILE" 2>&1
 
 # 크롤러 목록 및 관련 데이터 파일 경로 (zsh 연관 배열)
 typeset -A CRAWLERS

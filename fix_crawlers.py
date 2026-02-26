@@ -2,9 +2,9 @@ import os
 import re
 
 crawlers = [
-    "/Users/kimkyungho/app01/hk_korea_crawler/processor.py",
-    "/Users/kimkyungho/app01/hk_global_crawler/processor.py",
-    "/Users/kimkyungho/app01/jipconomy_crawler/processor.py"
+    "/Users/kimkyungho/Developer/app01/hk_korea_crawler/processor.py",
+    "/Users/kimkyungho/Developer/app01/hk_global_crawler/processor.py",
+    "/Users/kimkyungho/Developer/app01/jipconomy_crawler/processor.py"
 ]
 
 for crawler_path in crawlers:

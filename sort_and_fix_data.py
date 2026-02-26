@@ -2,10 +2,10 @@ import json
 import os
 
 files = [
-    "/Users/kimkyungho/app01/HKKoreaApp/src/services/data.json",
-    "/Users/kimkyungho/app01/HKGlobalApp/src/services/data.json",
-    "/Users/kimkyungho/app01/JipconomyApp/src/services/data.json",
-    "/Users/kimkyungho/app01/MKSummaryApp/src/services/data.json"
+    "/Users/kimkyungho/Developer/app01/HKKoreaApp/src/services/data.json",
+    "/Users/kimkyungho/Developer/app01/HKGlobalApp/src/services/data.json",
+    "/Users/kimkyungho/Developer/app01/JipconomyApp/src/services/data.json",
+    "/Users/kimkyungho/Developer/app01/MKSummaryApp/src/services/data.json"
 ]
 
 for file_path in files:

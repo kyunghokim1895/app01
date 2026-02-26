@@ -17,10 +17,11 @@ jobs:
           fetch-depth: 0
 
       - name: Git Safe Directory
-        run: git config --global --add safe.directory *
+        run: git config --global --add safe.directory "*"
 
       - name: Install dependencies
         run: |
+          export PATH="/opt/homebrew/bin:$PATH"
           python3 -m pip install --upgrade pip
           python3 -m pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv
           python3 -m pip install -U yt-dlp
@@ -31,12 +32,14 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
         run: |
+          export PATH="/opt/homebrew/bin:$PATH"
           python3 src/master_processor.py --app all
           echo "==== Check for data modifications ===="
           git status
 
       - name: Commit and Push changes
         run: |
+          git config --global pull.rebase true
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           

@@ -2,7 +2,7 @@
 # 서울경제TV 요약 데이터 업데이트 자동화 스크립트
 
 # 프로젝트 루트 경로 (절대 경로 사용)
-PROJECT_ROOT="/Users/kimkyungho/app01"
+PROJECT_ROOT="/Users/kimkyungho/Developer/app01"
 DATA_FILE="SentvSummaryApp/src/services/data.json"
 
 echo "--- 1. 최신 뉴스 요약 시작 (3개월치) ---"
