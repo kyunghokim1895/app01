@@ -33,16 +33,22 @@ jobs:
 
       - name: Install dependencies
         run: |
-          py -m pip install --upgrade pip
-          pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv
-          py -m pip install -U yt-dlp
+          date /t >> c:\workflow_debug.txt
+          time /t >> c:\workflow_debug.txt
+          echo "Starting dependency installation" >> c:\workflow_debug.txt
+          py -m pip install --upgrade pip >> c:\workflow_debug.txt 2>&1
+          pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv >> c:\workflow_debug.txt 2>&1
+          py -m pip install -U yt-dlp >> c:\workflow_debug.txt 2>&1
 
       - name: Verify Environment
-        run: py src/verify_env.py
+        run: |
+          echo "Starting environment verification" >> c:\workflow_debug.txt
+          py src/verify_env.py >> c:\workflow_debug.txt 2>&1
 
       - name: Run Master Processor (Update All Apps)
         run: |
-          py src/master_processor.py --app all
+          echo "Starting master processor" >> c:\workflow_debug.txt
+          py src/master_processor.py --app all >> c:\workflow_debug.txt 2>&1
           echo "==== Check for data modifications ===="
           git status
 
