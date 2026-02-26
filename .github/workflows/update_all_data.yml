@@ -19,6 +19,8 @@ jobs:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
+      PYTHON_EXE: "C:\\Users\\수호샘\\AppData\\Local\\Programs\\Python\\Python314\\python.exe"
+      PIP_EXE: "C:\\Users\\수호샘\\AppData\\Local\\Programs\\Python\\Python314\\Scripts\\pip.exe"
 
     steps:
       - name: Checkout code
@@ -38,19 +40,19 @@ jobs:
           time /t >> workflow_debug.txt
           echo "Current working directory: %CD%" >> workflow_debug.txt
           echo "Starting dependency installation" >> workflow_debug.txt
-          py -m pip install --upgrade pip >> workflow_debug.txt 2>&1
-          pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv >> workflow_debug.txt 2>&1
-          py -m pip install -U yt-dlp >> workflow_debug.txt 2>&1
+          "%PYTHON_EXE%" -m pip install --upgrade pip >> workflow_debug.txt 2>&1
+          "%PIP_EXE%" install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv >> workflow_debug.txt 2>&1
+          "%PYTHON_EXE%" -m pip install -U yt-dlp >> workflow_debug.txt 2>&1
 
       - name: Verify Environment
         run: |
           echo "Starting environment verification" >> workflow_debug.txt
-          py src/verify_env.py >> workflow_debug.txt 2>&1
+          "%PYTHON_EXE%" src/verify_env.py >> workflow_debug.txt 2>&1
 
       - name: Run Master Processor (Update All Apps)
         run: |
           echo "Starting master processor" >> workflow_debug.txt
-          py src/master_processor.py --app all >> workflow_debug.txt 2>&1
+          "%PYTHON_EXE%" src/master_processor.py --app all >> workflow_debug.txt 2>&1
           echo "==== Check for data modifications ===="
           git status
 
