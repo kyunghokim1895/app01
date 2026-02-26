@@ -38,22 +38,24 @@ jobs:
 
       - name: Install dependencies
         run: |
-          date /t >> c:\workflow_debug.txt
-          time /t >> c:\workflow_debug.txt
-          echo "Starting dependency installation" >> c:\workflow_debug.txt
-          py -m pip install --upgrade pip >> c:\workflow_debug.txt 2>&1
-          pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv >> c:\workflow_debug.txt 2>&1
-          py -m pip install -U yt-dlp >> c:\workflow_debug.txt 2>&1
+          echo "==== WORKFLOW DEBUG START ====" > workflow_debug.txt
+          date /t >> workflow_debug.txt
+          time /t >> workflow_debug.txt
+          echo "Current working directory: %CD%" >> workflow_debug.txt
+          echo "Starting dependency installation" >> workflow_debug.txt
+          py -m pip install --upgrade pip >> workflow_debug.txt 2>&1
+          pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv >> workflow_debug.txt 2>&1
+          py -m pip install -U yt-dlp >> workflow_debug.txt 2>&1
 
       - name: Verify Environment
         run: |
-          echo "Starting environment verification" >> c:\workflow_debug.txt
-          py src/verify_env.py >> c:\workflow_debug.txt 2>&1
+          echo "Starting environment verification" >> workflow_debug.txt
+          py src/verify_env.py >> workflow_debug.txt 2>&1
 
       - name: Run Master Processor (Update All Apps)
         run: |
-          echo "Starting master processor" >> c:\workflow_debug.txt
-          py src/master_processor.py --app all >> c:\workflow_debug.txt 2>&1
+          echo "Starting master processor" >> workflow_debug.txt
+          py src/master_processor.py --app all >> workflow_debug.txt 2>&1
           echo "==== Check for data modifications ===="
           git status
 
