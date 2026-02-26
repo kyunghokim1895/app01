@@ -108,11 +108,31 @@ def main():
         print(f"Error: No app found with name '{args.app}'")
         return
 
+    success_count = 0
+    fail_count = 0
+    failed_apps = []
+
     for app_config in apps_to_process:
         try:
             process_app(app_config, model, youtube_api_key)
+            success_count += 1
         except Exception as e:
-            print(f"Error processing {app_config['name']}: {str(e)}")
+            print(f"!!! Error processing {app_config['name']}: {str(e)}")
+            fail_count += 1
+            failed_apps.append(app_config['name'])
+
+    print(f"\n{'='*40}")
+    print(f"Update Summary:")
+    print(f"  Total Apps: {len(apps_to_process)}")
+    print(f"  Success: {success_count}")
+    print(f"  Failure: {fail_count}")
+    if failed_apps:
+        print(f"  Failed Apps: {', '.join(failed_apps)}")
+    print(f"{'='*40}")
+
+    if fail_count > 0 and success_count == 0:
+        print("CRITICAL: All apps failed to process.")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
