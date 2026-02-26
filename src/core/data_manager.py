@@ -59,7 +59,9 @@ def sync_db_to_json(db_path, json_path):
     sorted_data = sorted(unique_data, key=lambda x: x.get('publishedAt', ''), reverse=True)
     
     save_json_data(json_path, sorted_data)
-    return {item['id'] for item in sorted_data}
+    # Only return IDs with valid summaries from DB so that videos
+    # that previously failed (no summary) are retried on next run.
+    return {row[0] for row in rows}
 
 def save_video_to_db(db_path, video_id, title, analysis, published_at, video_url):
     conn = sqlite3.connect(db_path)

@@ -81,7 +81,7 @@ import xml.etree.ElementTree as ET
 
 import ssl
 
-def get_video_list(api_key, channel_id, days=3, max_results=10):
+def get_video_list(api_key, channel_id, days=7, max_results=30):
     """
     유튜브 API 대신 RSS 피드를 사용하여 최신 영상 목록을 가져옵니다.
     할당량(Quota)을 소모하지 않으며 차단 위험이 낮습니다.
