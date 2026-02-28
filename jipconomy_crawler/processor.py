@@ -13,6 +13,11 @@ import google.generativeai as genai
 import googleapiclient.discovery
 from dotenv import load_dotenv
 
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from src.core.youtube_service import get_video_list
+
 # .env 파일 로드
 load_dotenv()
 
@@ -97,34 +102,6 @@ def get_transcript_via_ytdlp(video_id):
     except Exception as e:
         for f in glob.glob(f"{temp_prefix}*"): os.remove(f)
     return None
-
-def get_video_list(api_key, channel_id):
-    youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=api_key)
-    published_after = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%dT%H:%M:%SZ")
-    videos = []
-    next_page_token = None
-    while True:
-        request = youtube.search().list(
-            part="snippet",
-            channelId=channel_id,
-            maxResults=50,
-            order="date",
-            publishedAfter=published_after,
-            pageToken=next_page_token,
-            type="video"
-        )
-        response = request.execute()
-        items = response.get("items", [])
-        for item in items:
-            videos.append({
-                "id": item["id"]["videoId"],
-                "title": html.unescape(item["snippet"]["title"]),
-                "publishedAt": item["snippet"]["publishedAt"][:10],
-                "videoUrl": f"https://www.youtube.com/watch?v={item['id']['videoId']}"
-            })
-        next_page_token = response.get("nextPageToken")
-        if not next_page_token or len(videos) >= 30: break
-    return videos
 
 def get_transcript(video_id):
     max_retries = 2

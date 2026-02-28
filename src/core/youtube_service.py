@@ -83,71 +83,61 @@ import ssl
 
 def get_video_list(api_key, channel_id, days=7, max_results=30):
     """
-    유튜브 API 대신 RSS 피드를 사용하여 최신 영상 목록을 가져옵니다.
-    할당량(Quota)을 소모하지 않으며 차단 위험이 낮습니다.
+    유튜브 API의 playlistItems 엔드포인트를 사용하여 최신 영상 목록을 기져옵니다.
+    search 대신 playlist(Uploads)를 조회하여 1 quota 단위로 저렴하게 검색합니다.
     """
-    rss_url = f"https://www.youtube.com/feeds/videos.xml?channel_id={channel_id}"
     videos = []
     
     try:
-        print(f"   [RSS] Fetching feed from {rss_url}...")
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        req = urllib.request.Request(rss_url, headers=headers)
+        from googleapiclient.discovery import build
+        youtube = build("youtube", "v3", developerKey=api_key)
         
-        # SSL 인증서 문제 우회 (특히 macOS 로컬 환경 대응)
-        context = ssl._create_unverified_context()
+        # 'Uploads' 플레이리스트 ID는 채널 ID의 두 번째 글자(C)를 (U)로 바꾼 형태입니다.
+        uploads_playlist_id = channel_id[:1] + "U" + channel_id[2:]
+        print(f"   [API] Fetching videos from playlist {uploads_playlist_id} (Channel: {channel_id})...")
         
-        with urllib.request.urlopen(req, context=context, timeout=20) as response:
-            xml_content = response.read()
-            root = ET.fromstring(xml_content)
+        cutoff_date = datetime.now() - timedelta(days=days)
+        
+        request = youtube.playlistItems().list(
+            part="snippet,contentDetails",
+            playlistId=uploads_playlist_id,
+            maxResults=max_results
+        )
+        response = request.execute()
+        
+        for item in response.get("items", []):
+            video_id = item["contentDetails"]["videoId"]
+            title = item["snippet"]["title"]
+            published_str = item["snippet"]["publishedAt"]
+            description = item["snippet"]["description"]
             
-            # Atom Namespace
-            ns = {'ns': 'http://www.w3.org/2005/Atom', 'yt': 'http://www.youtube.com/xml/schemas/2015'}
+            # Filter by publish date
+            try:
+                pub_date = datetime.fromisoformat(published_str.replace('Z', '+00:00'))
+                # If timezone is missing assume UTC
+                if pub_date.tzinfo is None:
+                    cutoff_date = cutoff_date.replace(tzinfo=None)
+                elif cutoff_date.tzinfo is None:
+                    cutoff_date = cutoff_date.replace(tzinfo=pub_date.tzinfo)
+                    
+                if pub_date < cutoff_date:
+                    continue
+            except Exception as e:
+                print(f"   [API] Date parse error for {video_id}: {e}")
+                continue
+                
+            videos.append({
+                "id": video_id,
+                "title": html.unescape(title),
+                "description": description,
+                "publishedAt": published_str[:10],
+                "videoUrl": f"https://www.youtube.com/watch?v={video_id}"
+            })
             
-            for entry in root.findall('ns:entry', ns):
-                v_id_elem = entry.find('yt:videoId', ns)
-                title_elem = entry.find('ns:title', ns)
-                pub_elem = entry.find('ns:published', ns)
-                
-                if v_id_elem is None or title_elem is None or pub_elem is None:
-                    continue
-                    
-                # Description parsing (Level 3 Fallback)
-                media_ns = {'media': 'http://search.yahoo.com/mrss/'}
-                desc_elem = entry.find('media:group/media:description', media_ns)
-                description = desc_elem.text if desc_elem is not None else ""
-                
-                video_id = v_id_elem.text
-                title = title_elem.text
-                published = pub_elem.text
-                
-                if not video_id or not title or not published:
-                    continue
-                
-                # 날짜 필터링
-                try:
-                    pub_date = datetime.fromisoformat(published.replace('Z', '+00:00'))
-                    if pub_date < datetime.now(pub_date.tzinfo) - timedelta(days=days):
-                        continue
-                except Exception:
-                    continue
-                
-                videos.append({
-                    "id": video_id,
-                    "title": html.unescape(title),
-                    "description": description,
-                    "publishedAt": published[:10],
-                    "videoUrl": f"https://www.youtube.com/watch?v={video_id}"
-                })
-                
-                if len(videos) >= max_results:
-                    break
-                    
-        print(f"   [RSS] Found {len(videos)} recent videos.")
+        print(f"   [API] Found {len(videos)} recent videos within {days} days.")
     except Exception as e:
-        print(f"   [RSS ERROR] Failed to parse RSS feed: {str(e)}")
-        # Fallback to empty list or you could keep old API logic as a very last resort
-        # For now, let's rely on RSS as primary for redesign.
+        print(f"   [API ERROR] Failed to fetch video list: {str(e)}")
+        
     return videos
 
 def get_transcript(video_id):
