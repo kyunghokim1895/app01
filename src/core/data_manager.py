@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import json
+from datetime import datetime
 
 def init_db(db_path):
     os.makedirs(os.path.dirname(db_path), exist_ok=True) if os.path.dirname(db_path) else None
@@ -14,9 +15,15 @@ def init_db(db_path):
             summaryList TEXT,
             keywords TEXT,
             publishedAt TEXT,
-            videoUrl TEXT
+            videoUrl TEXT,
+            crawledAt TEXT
         )
     ''')
+    # 기존 DB에 crawledAt 컬럼이 없는 경우 추가
+    try:
+        cursor.execute("ALTER TABLE videos ADD COLUMN crawledAt TEXT")
+    except sqlite3.OperationalError:
+        pass  # 이미 존재하면 무시
     conn.commit()
     conn.close()
 
@@ -66,11 +73,12 @@ def sync_db_to_json(db_path, json_path):
 def save_video_to_db(db_path, video_id, title, analysis, published_at, video_url):
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute("REPLACE INTO videos VALUES (?,?,?,?,?,?,?)", (
+    cursor.execute("REPLACE INTO videos (id, title, summary, summaryList, keywords, publishedAt, videoUrl, crawledAt) VALUES (?,?,?,?,?,?,?,?)", (
         video_id, title, analysis['summary'],
         json.dumps(analysis['summaryList'], ensure_ascii=False),
         json.dumps(analysis['keywords'], ensure_ascii=False),
-        published_at, video_url
+        published_at, video_url,
+        datetime.now().isoformat()
     ))
     conn.commit()
     conn.close()

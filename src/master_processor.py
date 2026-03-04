@@ -4,6 +4,7 @@ import json
 import time
 import random
 import argparse
+from datetime import datetime
 from dotenv import load_dotenv
 
 # Add the project root to sys.path to allow importing from src
@@ -12,13 +13,14 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.core import youtube_service, gemini_service, data_manager
 
 def process_app(app_config, model, youtube_api_key):
+    """앱 하나를 처리하고 (신규 처리 수, 확인 영상 수) 튜플을 반환합니다."""
     name = app_config['name']
     channel_id = app_config['channel_id']
     json_path = os.path.join(os.getcwd(), app_config['json_path'])
     db_path = os.path.join(os.getcwd(), app_config['db_path'])
     
     print(f"\n>>> Processing App: {name}")
-    
+    new_count = 0
     # 1. Initialize
     data_manager.init_db(db_path)
     
@@ -70,12 +72,16 @@ def process_app(app_config, model, youtube_api_key):
         new_item = {
             "id": video_id, "title": v['title'], "summary": analysis['summary'],
             "summaryList": analysis['summaryList'], "keywords": analysis['keywords'],
-            "publishedAt": v['publishedAt'], "videoUrl": v['videoUrl']
+            "publishedAt": v['publishedAt'], "videoUrl": v['videoUrl'],
+            "crawledAt": datetime.now().isoformat()
         }
         data_manager.update_incremental_json(json_path, new_item)
         
+        new_count += 1
         print(f"      Successfully updated {video_id}")
         time.sleep(5)
+    
+    return new_count, len(videos)
 
 def main():
     load_dotenv()
@@ -111,24 +117,54 @@ def main():
     success_count = 0
     fail_count = 0
     failed_apps = []
+    app_results = []
 
     for app_config in apps_to_process:
         try:
-            process_app(app_config, model, youtube_api_key)
+            new_count, checked_count = process_app(app_config, model, youtube_api_key)
             success_count += 1
+            app_results.append({
+                "app": app_config['name'],
+                "videos_checked": checked_count,
+                "new_processed": new_count,
+                "status": "success"
+            })
         except Exception as e:
             print(f"!!! Error processing {app_config['name']}: {str(e)}")
             fail_count += 1
             failed_apps.append(app_config['name'])
+            app_results.append({
+                "app": app_config['name'],
+                "videos_checked": 0,
+                "new_processed": 0,
+                "status": f"failed: {str(e)[:100]}"
+            })
 
+    # 상세 Summary 출력
     print(f"\n{'='*40}")
     print(f"Update Summary:")
     print(f"  Total Apps: {len(apps_to_process)}")
-    print(f"  Success: {success_count}")
-    print(f"  Failure: {fail_count}")
+    for r in app_results:
+        print(f"  {r['app']}: {r['videos_checked']}개 확인 → {r['new_processed']}개 신규 처리 [{r['status']}]")
+    print(f"  Success: {success_count} / Failure: {fail_count}")
     if failed_apps:
         print(f"  Failed Apps: {', '.join(failed_apps)}")
     print(f"{'='*40}")
+
+    # JSON 리포트 저장
+    report = {
+        "run_date": datetime.now().isoformat(),
+        "total_apps": len(apps_to_process),
+        "results": app_results,
+        "success": success_count,
+        "failure": fail_count
+    }
+    reports_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "reports")
+    os.makedirs(reports_dir, exist_ok=True)
+    report_path = os.path.join(reports_dir, f"update_report_{datetime.now().strftime('%Y-%m-%d')}.json")
+    with open(report_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, ensure_ascii=False, indent=2)
+    print(f"\nReport saved to {report_path}")
 
     if fail_count > 0 and success_count == 0:
         print("CRITICAL: All apps failed to process.")

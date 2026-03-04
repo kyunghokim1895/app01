@@ -46,6 +46,7 @@ jobs:
           # Stage changes
           git add -f SentvSummaryApp/src/services/data.json MKSummaryApp/src/services/data.json HKKoreaApp/src/services/data.json JipconomyApp/src/services/data.json HKGlobalApp/src/services/data.json 2>/dev/null || true
           git add -f crawler/summaries.db mk_crawler/summaries.db hk_global_crawler/summaries.db hk_korea_crawler/summaries.db jipconomy_crawler/summaries.db 2>/dev/null || true
+          git add -f reports/ 2>/dev/null || true
           git add . # Fallback for any other changes
           
           # Check if there are changes to commit
