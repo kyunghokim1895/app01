@@ -8,4 +8,5 @@ __pycache__/
 *.txt
 *.log
 temp_audio_*
+temp_video_*
 temp_sub_*
