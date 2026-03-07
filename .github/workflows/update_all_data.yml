@@ -10,6 +10,11 @@ jobs:
     runs-on: [self-hosted, macOS]
     permissions:
       contents: write
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -26,11 +31,12 @@ jobs:
           python3 -m pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv
           python3 -m pip install -U yt-dlp
 
+      - name: Verify Environment
+        run: |
+          export PATH="/opt/homebrew/bin:$PATH"
+          python3 src/verify_env.py
+
       - name: Run Master Processor (Update All Apps)
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-          YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
         run: |
           export PATH="/opt/homebrew/bin:$PATH"
           python3 src/master_processor.py --app all
@@ -45,7 +51,6 @@ jobs:
           
           # Stage changes
           git add -f SentvSummaryApp/src/services/data.json MKSummaryApp/src/services/data.json HKKoreaApp/src/services/data.json JipconomyApp/src/services/data.json HKGlobalApp/src/services/data.json 2>/dev/null || true
-          git add -f crawler/summaries.db mk_crawler/summaries.db hk_global_crawler/summaries.db hk_korea_crawler/summaries.db jipconomy_crawler/summaries.db 2>/dev/null || true
           git add -f reports/ 2>/dev/null || true
           git add . # Fallback for any other changes
           
@@ -55,7 +60,6 @@ jobs:
           else
             git commit -m "Auto-update all news summaries via Master Processor [$(date +'%Y-%m-%d')]"
             
-            # Using a loop to retry push in case of concurrent updates
             # Determine current branch name
             BRANCH=$(git rev-parse --abbrev-ref HEAD)
             for i in {1..3}; do
