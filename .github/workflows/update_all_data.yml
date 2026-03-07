@@ -39,7 +39,7 @@ jobs:
       - name: Run Master Processor (Update All Apps)
         run: |
           export PATH="/opt/homebrew/bin:$PATH"
-          python3 src/master_processor.py --app all
+          python3 -u src/master_processor.py --app all
           echo "==== Check for data modifications ===="
           git status
 
