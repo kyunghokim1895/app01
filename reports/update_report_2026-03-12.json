@@ -1,0 +1,38 @@
+{
+  "run_date": "2026-03-12T20:33:36.010955",
+  "total_apps": 5,
+  "results": [
+    {
+      "app": "SentvSummaryApp",
+      "videos_checked": 30,
+      "new_processed": 30,
+      "status": "success"
+    },
+    {
+      "app": "JipconomyApp",
+      "videos_checked": 6,
+      "new_processed": 6,
+      "status": "success"
+    },
+    {
+      "app": "HKKoreaApp",
+      "videos_checked": 12,
+      "new_processed": 12,
+      "status": "success"
+    },
+    {
+      "app": "MKSummaryApp",
+      "videos_checked": 21,
+      "new_processed": 21,
+      "status": "success"
+    },
+    {
+      "app": "HKGlobalApp",
+      "videos_checked": 26,
+      "new_processed": 26,
+      "status": "success"
+    }
+  ],
+  "success": 5,
+  "failure": 0
+}
