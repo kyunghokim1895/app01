@@ -8,6 +8,7 @@ import re
 import html
 from datetime import datetime, timedelta
 from youtube_transcript_api import YouTubeTranscriptApi
+from requests import Session
 import googleapiclient.discovery
 
 def clean_vtt(vtt_text):
@@ -168,9 +169,9 @@ def get_transcript(video_id):
             
             time.sleep(2 + random.random() * 2)
             if cookies:
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id, cookies=cookies)
+                transcript_list = YouTubeTranscriptApi().list(video_id, cookies=cookies)
             else:
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                transcript_list = YouTubeTranscriptApi().list(video_id)
             
             try:
                 transcript = transcript_list.find_transcript(['ko', 'ko-KR'])

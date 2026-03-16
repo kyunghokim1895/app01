@@ -10,7 +10,13 @@ echo "--- 업데이트 시작: $(date +'%Y-%m-%d %H:%M:%S') ---" >> "$LOG_FILE"
 echo "Pulling latest changes from GitHub..." >> "$LOG_FILE"
 cd "$PROJECT_ROOT" || exit
 git config pull.rebase true
-git pull origin $(git rev-parse --abbrev-ref HEAD) >> "$LOG_FILE" 2>&1
+if git pull origin $(git rev-parse --abbrev-ref HEAD) >> "$LOG_FILE" 2>&1; then
+    echo "Pull successful." >> "$LOG_FILE"
+else
+    echo "Pull failed. Stashing local changes and retrying..." >> "$LOG_FILE"
+    git stash >> "$LOG_FILE" 2>&1
+    git pull origin $(git rev-parse --abbrev-ref HEAD) >> "$LOG_FILE" 2>&1
+fi
 
 # 크롤러 목록 및 관련 데이터 파일 경로 (zsh 연관 배열)
 typeset -A CRAWLERS
