@@ -7,6 +7,14 @@ LOG_FILE="$PROJECT_ROOT/update_log.txt"
 
 echo "--- 업데이트 시작: $(date +'%Y-%m-%d %H:%M:%S') ---" >> "$LOG_FILE"
 
+# 스크립트 자체가 caffeinate 하에서 실행되도록 보장 (잠자기 방지)
+if [[ "$1" != "--child" ]]; then
+    echo "Starting with caffeinate (system sleep prevention active)..." >> "$LOG_FILE"
+    caffeinate -i "$0" --child "$@"
+    exit $?
+fi
+shift # --child 인자 제거
+
 # 1. 깃허브에서 최신 상태 가져오기 (멀티 디바이스 동기화)
 echo "Pulling latest changes from GitHub..." >> "$LOG_FILE"
 cd "$PROJECT_ROOT" || exit
@@ -29,31 +37,27 @@ CRAWLERS=(
     "jipconomy_crawler" "JipconomyApp/src/services/data.json"
 )
 
-# caffeinate를 사용하여 스크립트 실행 동안 시스템 취침 방지
-# -i: 시스템이 idle상태일 때 잠들지 않게 함
-caffeinate -i zsh <<EOF
-for crawler_dir in "\${(@k)CRAWLERS}"; do
-    data_file="\${CRAWLERS[\$crawler_dir]}"
-    echo "Processing \$crawler_dir..." >> "$LOG_FILE"
+for crawler_dir in "${(@k)CRAWLERS}"; do
+    data_file="${CRAWLERS[$crawler_dir]}"
+    echo "Processing $crawler_dir..." >> "$LOG_FILE"
     
-    cd "$PROJECT_ROOT/\$crawler_dir" || continue
+    cd "$PROJECT_ROOT/$crawler_dir" || continue
     python3 processor.py >> "$LOG_FILE" 2>&1
     
     # 앱 간 부하 분산을 위한 대기 (30~60초)
-    sleep_time=\$(( 30 + RANDOM % 31 ))
-    echo "Waiting \$sleep_time seconds before next app..." >> "$LOG_FILE"
-    sleep \$sleep_time
+    sleep_time=$(( 30 + RANDOM % 31 ))
+    echo "Waiting $sleep_time seconds before next app..." >> "$LOG_FILE"
+    sleep $sleep_time
     
     cd "$PROJECT_ROOT" || continue
     
-    if git diff --quiet "\$data_file"; then
-        echo "\$data_file: 변경 사항 없음" >> "$LOG_FILE"
+    if git diff --quiet "$data_file"; then
+        echo "$data_file: 변경 사항 없음" >> "$LOG_FILE"
     else
-        echo "\$data_file: 새로운 데이터 발견! 스테이징 중..." >> "$LOG_FILE"
-        git add "\$data_file"
+        echo "$data_file: 새로운 데이터 발견! 스테이징 중..." >> "$LOG_FILE"
+        git add "$data_file"
     fi
 done
-EOF
 
 # 변경사항이 있으면 한꺼번에 푸시
 if ! git diff --cached --quiet; then
