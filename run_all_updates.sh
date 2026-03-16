@@ -37,17 +37,30 @@ CRAWLERS=(
     "jipconomy_crawler" "JipconomyApp/src/services/data.json"
 )
 
+# 특정 앱 하나만 실행할 경우 (인자값 확인)
+TARGET_APP=""
+if [[ "$1" != "" ]]; then
+    TARGET_APP="$1"
+    echo "Target app specified: $TARGET_APP" | tee -a "$LOG_FILE"
+fi
+
 for crawler_dir in "${(@k)CRAWLERS}"; do
+    if [[ "$TARGET_APP" != "" && "$crawler_dir" != "$TARGET_APP" ]]; then
+        continue
+    fi
+    
     data_file="${CRAWLERS[$crawler_dir]}"
     echo "Processing $crawler_dir..." | tee -a "$LOG_FILE"
     
     cd "$PROJECT_ROOT/$crawler_dir" || continue
     python3 processor.py 2>&1 | tee -a "$LOG_FILE"
     
-    # 앱 간 부하 분산을 위한 대기 (30~60초)
-    sleep_time=$(( 30 + RANDOM % 31 ))
-    echo "Waiting $sleep_time seconds before next app..." | tee -a "$LOG_FILE"
-    sleep $sleep_time
+    # 병렬 실행 시에는 앱 간 대기 불필요, 단일 실행 시에도 다음 앱이 없으면 대기 불필요
+    if [[ "$TARGET_APP" == "" ]]; then
+        sleep_time=$(( 30 + RANDOM % 31 ))
+        echo "Waiting $sleep_time seconds before next app..." | tee -a "$LOG_FILE"
+        sleep $sleep_time
+    fi
     
     cd "$PROJECT_ROOT" || continue
     
