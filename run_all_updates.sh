@@ -1,7 +1,8 @@
 #!/bin/zsh
 # 전종목 요약 데이터 업데이트 통합 자동화 스크립트
 
-PROJECT_ROOT="/Users/kimkyungho/Developer/app01"
+# 스크립트 위치를 기준으로 프로젝트 루트 설정 (경로 하드코딩 제거)
+PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
 LOG_FILE="$PROJECT_ROOT/update_log.txt"
 
 echo "--- 업데이트 시작: $(date +'%Y-%m-%d %H:%M:%S') ---" >> "$LOG_FILE"
@@ -36,7 +37,7 @@ for crawler_dir in "\${(@k)CRAWLERS}"; do
     echo "Processing \$crawler_dir..." >> "$LOG_FILE"
     
     cd "$PROJECT_ROOT/\$crawler_dir" || continue
-    /Library/Frameworks/Python.framework/Versions/3.11/bin/python3 processor.py >> "$LOG_FILE" 2>&1
+    python3 processor.py >> "$LOG_FILE" 2>&1
     
     # 앱 간 부하 분산을 위한 대기 (30~60초)
     sleep_time=\$(( 30 + RANDOM % 31 ))
