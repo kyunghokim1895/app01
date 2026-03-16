@@ -2821,3 +2821,43 @@ Cleaning up temporary files...
 --- 모든 앱 업데이트 프로세스 완료: 2026-03-16 16:54:26 ---
 --- 업데이트 완료: 2026-03-16 16:54:26 ---
 -------------------------------------------
+From https://github.com/kyunghokim1895/app01
+ * branch            main       -> FETCH_HEAD
+Already up to date.
+Target app specified: hk_global_crawler
+Processing hk_global_crawler...
+/Users/kimkyungho/actions-runner/_work/app01/app01/hk_global_crawler/processor.py:12: FutureWarning: 
+
+All support for the `google.generativeai` package has ended. It will no longer be receiving 
+updates or bug fixes. Please switch to the `google.genai` package as soon as possible.
+See README for more details:
+
+https://github.com/google-gemini/deprecated-generative-ai-python/blob/main/README.md
+
+  import google.generativeai as genai
+   [API] Fetching videos from playlist UUWskYkV4c4S9D__rsfOl2JA (Channel: UCWskYkV4c4S9D__rsfOl2JA)...
+   [API] Found 26 recent videos within 7 days.
+[1/26] Processing: [김종학의 뉴욕, 지금-3월17일] 석유 공급 부족 해명 나선 베선트 | 미-중 정상회담 미뤄지나 | 종목(엔비디아, 메타, 네비우스, AMD, 포엣, 코어위브, 테슬라, 애플)
+      Downloading audio for syTevJ8Doww...
+      Uploading to Gemini...
+      Generating summary...
+      Successfully saved and updated JSON for syTevJ8Doww
+[2/26] Processing: [김현석의 월스트리트나우-3월17일] "이란 석유 지나가라"..유가 하락, 주가 반등 | 젠슨 "밀린 주문 $1조"
+      Downloading audio for 9g02Fh9WI2s...
+      Error in summarize_from_audio: Command '['/Library/Frameworks/Python.framework/Versions/3.11/bin/python3', '-m', 'yt_dlp', '-f', 'ba[ext=m4a]', '-o', 'temp_audio_9g02Fh9WI2s.m4a', '--max-filesize', '100M', '--js-runtimes', 'node', '--remote-components', 'ejs:github', 'https://www.youtube.com/watch?v=9g02Fh9WI2s']' returned non-zero exit status 1.
+   => Failed to get valid summary for 9g02Fh9WI2s
+[3/26] Processing: [빈난새의 개장전요것만-3월16일] 이란 "호르무즈 열려있어"..서로 급소는 피한다 | "미중 계속 소통" | 미, AI칩 수출규제 철회 | 메타 네비우스 마이크론 테슬라 키사이트
+      Downloading audio for eyf6Yjqa618...
+      Uploading to Gemini...
+      Generating summary...
+      Successfully saved and updated JSON for eyf6Yjqa618
+Done!
+HKGlobalApp/src/services/data.json: 새로운 데이터 발견! 스테이징 중...
+GitHub에 업데이트 푸시 중...
+To https://github.com/kyunghokim1895/app01
+   7a5bd9f..918bd8b  main -> main
+GitHub 푸시 완료!
+Cleaning up temporary files...
+--- 모든 앱 업데이트 프로세스 완료: 2026-03-17 06:38:03 ---
+--- 업데이트 완료: 2026-03-17 06:38:03 ---
+-------------------------------------------
