@@ -10,6 +10,7 @@ jobs:
     runs-on: [self-hosted, macOS]
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         app: [crawler, mk_crawler, hk_global_crawler, hk_korea_crawler, jipconomy_crawler]
     
@@ -44,7 +45,9 @@ jobs:
 
       - name: Force Sync with Remote
         run: |
+          rm -f .git/index.lock
           git fetch origin main
+          git checkout -f main
           git reset --hard origin/main
 
       - name: Run Update Script (Parallel Mode)
