@@ -17,6 +17,7 @@ import sys
 import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.core.youtube_service import get_video_list
+from src.core.analysis_service import AnalysisService
 
 # .env 파일 로드
 load_dotenv()
@@ -26,9 +27,8 @@ YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 CHANNEL_ID = "UCWskYkV4c4S9D__rsfOl2JA" # 한경 글로벌마켓
 
-# Gemini 설정
-genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.0-flash')
+# 서비스 초기화
+analysis_service = AnalysisService(GEMINI_API_KEY)
 
 # DB 및 출력 경로
 DB_PATH = "summaries.db"
@@ -51,157 +51,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-import html
-
-def clean_vtt(vtt_text):
-    lines = vtt_text.splitlines()
-    clean_lines = []
-    for line in lines:
-        if "-->" in line or line.startswith("WEBVTT") or line.startswith("Kind:") or line.startswith("Language:"):
-            continue
-        line = re.sub(r'<[^>]+>', '', line)
-        line = line.strip()
-        if line:
-            clean_lines.append(line)
-    final_lines = []
-    for line in clean_lines:
-        if not final_lines or final_lines[-1] != line:
-            final_lines.append(line)
-    return " ".join(final_lines)
-
-def get_transcript_via_ytdlp(video_id):
-    url = f"https://www.youtube.com/watch?v={video_id}"
-    temp_prefix = f"temp_sub_{video_id}"
-    cmd = [
-        sys.executable, "-m", "yt_dlp",
-        "--skip-download",
-        "--write-auto-subs",
-        "--write-subs",
-        "--sub-lang", "ko",
-        "--js-runtimes", "node",
-        "--remote-components", "ejs:github",
-        "-o", temp_prefix,
-    ]
-    possible_cookies = [
-        os.path.join(os.path.dirname(__file__), 'cookies.txt'),
-        os.path.join(os.path.dirname(__file__), 'www.youtube.com_cookies.txt')
-    ]
-    cookie_file = next((p for p in possible_cookies if os.path.exists(p)), None)
-    if cookie_file:
-        cmd.extend(["--cookies", cookie_file])
-    cmd.append(url)
-    try:
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=120)
-        files = glob.glob(f"{temp_prefix}*")
-        sub_file = next((f for f in files if f.endswith(('.vtt', '.srt'))), None)
-        if sub_file:
-            with open(sub_file, 'r', encoding='utf-8') as f:
-                content = f.read()
-            for f in files: os.remove(f)
-            return clean_vtt(content) if sub_file.endswith('.vtt') else content
-    except Exception as e:
-        for f in glob.glob(f"{temp_prefix}*"): os.remove(f)
-    return None
-
-def get_transcript(video_id):
-    max_retries = 2
-    for attempt in range(max_retries):
-        try:
-            env_cookies = os.getenv("YOUTUBE_COOKIES")
-            temp_cookie_path = os.path.join(os.path.dirname(__file__), "temp_cookies.txt")
-            if env_cookies:
-                with open(temp_cookie_path, "w") as f: f.write(env_cookies)
-                cookies = temp_cookie_path
-            else:
-                possible_cookies = [
-                    os.path.join(os.path.dirname(__file__), 'cookies.txt'),
-                    os.path.join(os.path.dirname(__file__), 'www.youtube.com_cookies.txt')
-                ]
-                cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
-            time.sleep(2 + random.random() * 2)
-            if cookies:
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id, cookies=cookies)
-            else:
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-            try:
-                transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
-            except:
-                transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
-            data = transcript.fetch()
-            return " ".join([i.get('text', '') for i in data])
-        except Exception as e:
-            if "429" in str(e) or "too many requests" in str(e).lower() or "no element found" in str(e).lower():
-                fallback_text = get_transcript_via_ytdlp(video_id)
-                if fallback_text: return fallback_text
-                time.sleep(30)
-            else: break
-        finally:
-            if os.path.exists(temp_cookie_path) and os.getenv("YOUTUBE_COOKIES"):
-                try: os.remove(temp_cookie_path)
-                except: pass
-    return None
-
-def parse_json_from_gemini(text_resp):
-    try:
-        if "```" in text_resp:
-            json_match = re.search(r"```(?:json)?\s*(.*?)\s*```", text_resp, re.DOTALL)
-            if json_match: text_resp = json_match.group(1)
-            else: text_resp = re.sub(r"```(json)?", "", text_resp).strip()
-        result = json.loads(text_resp)
-        return {
-            "summary": result.get("summary", result.get("요약", "")),
-            "summaryList": result.get("summaryList", result.get("요점", result.get("핵심내용", []))),
-            "keywords": result.get("keywords", result.get("키워드", []))
-        }
-    except: return None
-
-def summarize_with_gemini(text):
-    prompt = f"다음 영상을 1.한글요약(summary), 2.5문장리스트(summaryList), 3.#키워드4개(keywords) JSON으로 작성해줘: {text}"
-    try:
-        response = model.generate_content(prompt)
-        return parse_json_from_gemini(response.text)
-    except: return None
-
-def summarize_from_audio(video_id):
-    url = f"https://www.youtube.com/watch?v={video_id}"
-    audio_path = f"temp_audio_{video_id}.m4a"
-    cmd = [sys.executable, "-m", "yt_dlp", "-f", "ba[ext=m4a]", "-o", audio_path, "--max-filesize", "100M", "--js-runtimes", "node", "--remote-components", "ejs:github", url]
-    try:
-        print(f"      Downloading audio for {video_id}...")
-        subprocess.run(cmd, check=True, capture_output=True, timeout=300)
-        
-        if not os.path.exists(audio_path):
-            print(f"      Audio file not found after download: {audio_path}")
-            return None
-            
-        print(f"      Uploading to Gemini...")
-        sample_file = genai.upload_file(path=audio_path, display_name=f"Audio_{video_id}")
-        
-        # Wait for file to be ready
-        while sample_file.state.name == "PROCESSING":
-            time.sleep(2)
-            sample_file = genai.get_file(sample_file.name)
-            
-        print(f"      Generating summary...")
-        prompt = """오디오 내용을 1.한글요약(summary), 2.5문장리스트(summaryList), 3.#키워드4개(keywords) 포맷으로 분석해줘.
-반드시 아래와 같은 형태의 순수 JSON 객체로만 응답하고, 마크다운(```json 등)이나 다른 설명은 절대 추가하지 마:
-{
-  "summary": "전체 내용 한글 요약",
-  "summaryList": ["핵심 문장 1", "핵심 문장 2", "핵심 문장 3", "핵심 문장 4", "핵심 문장 5"],
-  "keywords": ["#키워드1", "#키워드2", "#키워드3", "#키워드4"]
-}"""
-        response = model.generate_content(
-            [sample_file, prompt],
-            generation_config=genai.types.GenerationConfig(response_mime_type="application/json")
-        )
-        
-        genai.delete_file(sample_file.name)
-        os.remove(audio_path)
-        return json.loads(response.text) # Directly parse JSON as response_mime_type is set
-    except Exception as e:
-        print(f"      Error in summarize_from_audio: {str(e)}")
-        if os.path.exists(audio_path): os.remove(audio_path)
-    return None
+# --- 중복 로직 삭제됨 (AnalysisService로 통합) ---
 
 def main():
     init_db()
@@ -257,8 +107,15 @@ def main():
         # 유튜브 부하 분산을 위한 랜덤 대기
         time.sleep(10 + random.random() * 10)
         
-        transcript = get_transcript(v['id'])
-        analysis = summarize_with_gemini(transcript) if transcript else summarize_from_audio(v['id'])
+        # 자막 추출 시도
+        transcript = analysis_service.get_transcript(v['id'])
+        
+        if transcript:
+            print(f"  > [OK] Transcript found (Length: {len(transcript)}). Summarizing...")
+            analysis = analysis_service.summarize_with_gemini(transcript, "한경 글로벌마켓")
+        else:
+            # 최종 수단: 직접 듣기
+            analysis = analysis_service.summarize_from_audio(v['id'])
         
         if not analysis or not analysis.get('summary') or not isinstance(analysis['summary'], str) or len(analysis['summary'].strip()) < 10:
             print(f"   => Failed to get valid summary for {v['id']}")

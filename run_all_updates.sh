@@ -17,16 +17,15 @@ shift # --child 인자 제거
 
 # 1. 깃허브에서 최신 상태 가져오기 (멀티 디바이스 동기화)
 # GitHub Actions 환경에서는 워크플로우에서 직접 관리하므로 건너뜁니다.
-if [[ -z "$GITHUB_ACTIONS" ]]; then
-    echo "Pulling latest changes from GitHub..." | tee -a "$LOG_FILE"
+if [[ -z "$GITHUB_ACTIONS" ]] && [[ "$*" != *"--no-sync"* ]]; then
+    echo "Pulling latest changes from GitHub (timeout 30s)..." | tee -a "$LOG_FILE"
     cd "$PROJECT_ROOT" || exit
     git config pull.rebase true
-    if git pull origin $(git rev-parse --abbrev-ref HEAD) >> "$LOG_FILE" 2>&1; then
+    # 터미널 프롬프트 방지 및 타임아웃 설정
+    if export GIT_TERMINAL_PROMPT=0; git pull --no-edit origin $(git rev-parse --abbrev-ref HEAD) >> "$LOG_FILE" 2>&1; then
         echo "Pull successful." | tee -a "$LOG_FILE"
     else
-        echo "Pull failed. Stashing local changes and retrying..." | tee -a "$LOG_FILE"
-        git stash 2>&1 | tee -a "$LOG_FILE"
-        git pull origin $(git rev-parse --abbrev-ref HEAD) 2>&1 | tee -a "$LOG_FILE"
+        echo "Pull failed or skipped (no credentials?). Continuing with local version..." | tee -a "$LOG_FILE"
     fi
 fi
 

@@ -26,6 +26,7 @@ jobs:
       YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      PYTHONUNBUFFERED: "1"
 
     steps:
       - name: Checkout code
@@ -50,7 +51,7 @@ jobs:
         run: |
           export PATH="/opt/homebrew/bin:$PATH"
           chmod +x run_all_updates.sh
-          ./run_all_updates.sh ${{ matrix.app }}
+          ./run_all_updates.sh ${{ matrix.app }} --no-sync
 
       - name: Commit and Push changes
         run: |
