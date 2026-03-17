@@ -120,9 +120,9 @@ def get_transcript(video_id):
                 cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
             time.sleep(2 + random.random() * 2)
             if cookies:
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id, cookies=cookies)
+                transcript_list = YouTubeTranscriptApi().list(video_id, cookies=cookies)
             else:
-                transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+                transcript_list = YouTubeTranscriptApi().list(video_id)
             try:
                 transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
             except:
