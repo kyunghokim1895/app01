@@ -40,6 +40,11 @@ jobs:
           export PATH="/opt/homebrew/bin:$PATH"
           python3 -m pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv
 
+      - name: Force Sync with Remote
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+
       - name: Run Update Script (Parallel Mode)
         run: |
           export PATH="/opt/homebrew/bin:$PATH"
@@ -52,7 +57,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           
           # 병렬 작업 간 충돌 방지를 위한 재시도 루프
-          for i in {1..10}; do
+          for i in {1..15}; do
             git add .
             if git diff --cached --quiet; then
               echo "No changes for ${{ matrix.app }}"
@@ -62,13 +67,25 @@ jobs:
             git commit -m "Auto-update: ${{ matrix.app }} [$(date +'%Y-%m-%d %H:%M')]"
             
             echo "Attempting to sync and push (attempt $i)..."
-            git pull --rebase origin main
+            # 최신 상태 가져오기
+            git fetch origin main
+            git rebase origin/main
+            
             if git push origin main; then
               echo "Push successful for ${{ matrix.app }}"
               exit 0
             fi
-            echo "Push conflict, retrying in $((RANDOM % 10 + 5)) seconds..."
-            sleep $((RANDOM % 10 + 5))
+            
+            # 충돌 발생 시 리셋 후 다시 시도
+            echo "Push conflict, retrying in jittered time..."
+            git reset --soft HEAD~1
+            git checkout main
+            git pull --rebase origin main
+            
+            # 랜덤 지터 추가 (5~20초)
+            SLEEP_TIME=$(( (RANDOM % 15) + 5 ))
+            echo "Waiting ${SLEEP_TIME} seconds before retry..."
+            sleep $SLEEP_TIME
           done
-          echo "Failed to push after 10 attempts"
+          echo "Failed to push after 15 attempts"
           exit 1

@@ -16,15 +16,18 @@ fi
 shift # --child 인자 제거
 
 # 1. 깃허브에서 최신 상태 가져오기 (멀티 디바이스 동기화)
-echo "Pulling latest changes from GitHub..." | tee -a "$LOG_FILE"
-cd "$PROJECT_ROOT" || exit
-git config pull.rebase true
-if git pull origin $(git rev-parse --abbrev-ref HEAD) >> "$LOG_FILE" 2>&1; then
-    echo "Pull successful." | tee -a "$LOG_FILE"
-else
-    echo "Pull failed. Stashing local changes and retrying..." | tee -a "$LOG_FILE"
-    git stash 2>&1 | tee -a "$LOG_FILE"
-    git pull origin $(git rev-parse --abbrev-ref HEAD) 2>&1 | tee -a "$LOG_FILE"
+# GitHub Actions 환경에서는 워크플로우에서 직접 관리하므로 건너뜁니다.
+if [[ -z "$GITHUB_ACTIONS" ]]; then
+    echo "Pulling latest changes from GitHub..." | tee -a "$LOG_FILE"
+    cd "$PROJECT_ROOT" || exit
+    git config pull.rebase true
+    if git pull origin $(git rev-parse --abbrev-ref HEAD) >> "$LOG_FILE" 2>&1; then
+        echo "Pull successful." | tee -a "$LOG_FILE"
+    else
+        echo "Pull failed. Stashing local changes and retrying..." | tee -a "$LOG_FILE"
+        git stash 2>&1 | tee -a "$LOG_FILE"
+        git pull origin $(git rev-parse --abbrev-ref HEAD) 2>&1 | tee -a "$LOG_FILE"
+    fi
 fi
 
 # 크롤러 목록 및 관련 데이터 파일 경로 (zsh 연관 배열)
@@ -72,13 +75,15 @@ for crawler_dir in "${(@k)CRAWLERS}"; do
     fi
 done
 
-# 변경사항이 있으면 한꺼번에 푸시
-if ! git diff --cached --quiet; then
+# 변경사항이 있으면 한꺼번에 푸시 (GitHub Actions 환경이 아닐 때만)
+if [[ -z "$GITHUB_ACTIONS" ]] && ! git diff --cached --quiet; then
     echo "GitHub에 업데이트 푸시 중..." | tee -a "$LOG_FILE"
     git commit -m "Auto-update all apps data: $(date +'%Y-%m-%d %H:%M:%S')"
     # SSH 환경 등이 설정되어 있어야 함
     git push >> "$LOG_FILE" 2>&1
     echo "GitHub 푸시 완료!" | tee -a "$LOG_FILE"
+elif [[ -n "$GITHUB_ACTIONS" ]]; then
+    echo "GitHub Actions detected. Skipping internal commit/push as it is handled by the workflow." | tee -a "$LOG_FILE"
 else
     echo "업데이트된 데이터가 없습니다." | tee -a "$LOG_FILE"
 fi
