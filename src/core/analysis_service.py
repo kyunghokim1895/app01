@@ -7,6 +7,8 @@ import subprocess
 import re
 import glob
 from youtube_transcript_api import YouTubeTranscriptApi
+import http.cookiejar
+from requests import Session
 import google.generativeai as genai
 
 class AnalysisService:
@@ -86,6 +88,7 @@ class AnalysisService:
         """YouTubeTranscriptApi를 사용하여 자막을 가져옵니다. 실패 시 yt-dlp로 우회합니다."""
         max_retries = 2
         for attempt in range(max_retries):
+            temp_cookie_path = f"temp_cookies_{video_id}_{attempt}.txt"
             try:
                 time.sleep(2 + random.random() * 2)
                 
@@ -94,44 +97,62 @@ class AnalysisService:
                 current_cookies = cookies_path
                 
                 if env_cookies and not current_cookies:
-                    temp_cookie_path = "temp_cookies_shared.txt"
                     with open(temp_cookie_path, "w") as f:
                         f.write(env_cookies)
                     current_cookies = temp_cookie_path
 
-                if current_cookies:
-                    transcript_list = YouTubeTranscriptApi().list(video_id, cookies=current_cookies)
-                else:
-                    transcript_list = YouTubeTranscriptApi().list(video_id)
-                    
+                # YouTubeTranscriptApi 호출 시도
                 try:
-                    transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
-                except:
-                    transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
+                    session = Session()
+                    if current_cookies and os.path.exists(current_cookies):
+                        cookie_jar = http.cookiejar.MozillaCookieJar(current_cookies)
+                        cookie_jar.load(ignore_discard=True, ignore_expires=True)
+                        session.cookies = cookie_jar
                     
-                data = transcript.fetch()
-                # 텍스트 추출 (딕셔너리 또는 객체 형태 모두 대응)
-                texts = []
-                for i in data:
-                    if isinstance(i, dict):
-                        texts.append(i.get('text', ''))
-                    else:
-                        texts.append(getattr(i, 'text', ''))
-                return " ".join(texts)
+                    # 1. 인스턴스 생성 시 http_client 주입 (표준 방식)
+                    api = YouTubeTranscriptApi(http_client=session)
+                    transcript_list = api.list(video_id)
+                    
+                    try:
+                        transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
+                    except:
+                        transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
+                    
+                    data = transcript.fetch()
+                    texts = [i.get('text', '') if isinstance(i, dict) else getattr(i, 'text', '') for i in data]
+                    return " ".join(texts)
+                
+                except (TypeError, Exception) as inner_e:
+                    # 'cookies' 또는 'http_client' 관련 에러 발생 시 세션 없이 기본 호출 시도
+                    if any(x in str(inner_e).lower() for x in ["cookies", "http_client", "unexpected keyword"]):
+                        print(f"      [DEBUG] Retrying with basic instance due to API mismatch: {inner_e}")
+                        api = YouTubeTranscriptApi()
+                        transcript_list = api.list(video_id)
+                        transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
+                        data = transcript.fetch()
+                        return " ".join([i.get('text', '') for i in data])
+                    raise inner_e
 
             except Exception as e:
                 error_str = str(e).lower()
-                if any(x in error_str for x in ["too many requests", "429", "no element found"]):
-                    print(f"  > [API BLOCKED] YouTube API blocked. Attempting yt-dlp fallback...")
+                if any(x in error_str for x in ["too many requests", "429", "no element found", "unavailable"]):
+                    print(f"  > [API BLOCKED/UNAVAILABLE] YouTube API issues ({e}). Attempting yt-dlp fallback...")
                     fallback_text = self.get_transcript_via_ytdlp(video_id)
                     if fallback_text: return fallback_text
                     
-                    wait_time = (attempt + 1) * 30 + random.random() * 10
-                    print(f"  > [WAIT] Retrying in {int(wait_time)}s...")
-                    time.sleep(wait_time)
+                    if "unavailable" not in error_str: # 정말 없는 영상이 아니면 대기 후 재시도
+                        wait_time = (attempt + 1) * 30 + random.random() * 10
+                        print(f"  > [WAIT] Retrying in {int(wait_time)}s...")
+                        time.sleep(wait_time)
                 else:
                     print(f"  > Transcript Error for {video_id}: {e}")
+                    fallback_text = self.get_transcript_via_ytdlp(video_id)
+                    if fallback_text: return fallback_text
                     break
+            finally:
+                if os.path.exists(temp_cookie_path):
+                    try: os.remove(temp_cookie_path)
+                    except: pass
         return None
 
     def parse_json_from_gemini(self, text_resp):
@@ -189,14 +210,33 @@ class AnalysisService:
             sys.executable, "-m", "yt_dlp",
             "-f", "ba[ext=m4a]",
             "-o", audio_path,
-            "--max-filesize", "20M",
+            "--max-filesize", "30M", # 20M -> 30M 상향 (긴 영상 대응)
             "--js-runtimes", "node",
             "--remote-components", "ejs:github",
-            url
+            "--no-check-certificates",
         ]
         
+        # 쿠키 파일 확인 (get_transcript_via_ytdlp와 동일한 로직)
+        possible_cookies = [
+            os.path.join(os.getcwd(), 'cookies.txt'),
+            os.path.join(os.getcwd(), 'www.youtube.com_cookies.txt'),
+            os.path.join(os.path.dirname(os.getcwd()), 'cookies.txt')
+        ]
+        cookie_file = next((p for p in possible_cookies if os.path.exists(p)), None)
+        if cookie_file:
+            cmd.extend(["--cookies", cookie_file])
+            
+        po_token = os.getenv("YOUTUBE_PO_TOKEN")
+        if po_token:
+            cmd.extend(["--extractor-args", f"youtube:player_client=ios,android,mweb;po_token={po_token}"])
+        else:
+            cmd.extend(["--extractor-args", "youtube:player_client=ios,android,mweb"])
+            
+        cmd.append(url)
+        
         try:
-            subprocess.run(cmd, check=True, capture_output=True, timeout=180)
+            print(f"      [DEBUG] Downloading audio via yt-dlp...")
+            result = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=180)
             if not os.path.exists(audio_path): return None
             
             print(f"  > [OK] Audio downloaded. Uploading to Gemini...")
@@ -220,5 +260,7 @@ class AnalysisService:
             return self.parse_json_from_gemini(response.text)
         except Exception as e:
             print(f"  > [ULTIMATE ERROR] Audio analysis failed: {e}")
+            if hasattr(e, 'stderr') and e.stderr:
+                print(f"    [stderr]: {e.stderr}")
             if os.path.exists(audio_path): os.remove(audio_path)
         return None

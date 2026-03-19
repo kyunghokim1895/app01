@@ -7,6 +7,7 @@ import glob
 import re
 import html
 from datetime import datetime, timedelta
+import http.cookiejar
 from youtube_transcript_api import YouTubeTranscriptApi
 from requests import Session
 import googleapiclient.discovery
@@ -144,50 +145,78 @@ def get_video_list(api_key, channel_id, days=7, max_results=30):
 def get_transcript(video_id):
     max_retries = 2
     for attempt in range(max_retries):
+        temp_cookie_path = f"temp_cookies_v2_{video_id}_{attempt}.txt"
         try:
+            time.sleep(2 + random.random() * 2)
+            
+            # 전역 환경변수 쿠키 처리 (GHA용)
             env_cookies = os.getenv("YOUTUBE_COOKIES")
             current_dir = os.path.dirname(os.path.abspath(__file__))
             root_dir = os.path.dirname(os.path.dirname(current_dir))
-            temp_cookie_path = os.path.join(root_dir, "temp_cookies_v2.txt")
             
+            current_cookies = None
             if env_cookies:
-                # Ensure Netscape header exists and remove any leading/trailing whitespace
                 env_cookies = env_cookies.strip()
                 if not env_cookies.startswith("# Netscape"):
                     env_cookies = "# Netscape HTTP Cookie File\n" + env_cookies
                 try:
                     with open(temp_cookie_path, "w") as f: f.write(env_cookies)
-                    cookies = temp_cookie_path
-                    print(f"      [DEBUG] Created cookie file for transcript API: {env_cookies[:20]}...")
+                    current_cookies = temp_cookie_path
                 except Exception: pass
             else:
                 possible_cookies = [
                     os.path.join(root_dir, 'cookies.txt'),
                     os.path.join(root_dir, 'www.youtube.com_cookies.txt')
                 ]
-                cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
+                current_cookies = next((p for p in possible_cookies if os.path.exists(p)), None)
             
-            time.sleep(2 + random.random() * 2)
-            if cookies:
-                transcript_list = YouTubeTranscriptApi().list(video_id, cookies=cookies)
-            else:
-                transcript_list = YouTubeTranscriptApi().list(video_id)
-            
+            # YouTubeTranscriptApi 호출 시도
             try:
-                transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
-            except:
-                transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
+                session = Session()
+                if current_cookies and os.path.exists(current_cookies):
+                    cookie_jar = http.cookiejar.MozillaCookieJar(current_cookies)
+                    cookie_jar.load(ignore_discard=True, ignore_expires=True)
+                    session.cookies = cookie_jar
+                
+                # 인스턴스 생성 후 호출 (현재 설치된 버전에 최적화)
+                api = YouTubeTranscriptApi(http_client=session)
+                transcript_list = api.list(video_id)
+                
+                try:
+                    transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
+                except:
+                    transcript = transcript_list.find_generated_transcript(['ko', 'ko-KR'])
+                
+                data = transcript.fetch()
+                return " ".join([i.get('text', '') for i in data])
             
-            data = transcript.fetch()
-            return " ".join([i.get('text', '') for i in data])
+            except (TypeError, Exception) as inner_e:
+                # 에러 발생 시 기본 인스턴스로 재시도
+                if any(x in str(inner_e).lower() for x in ["cookies", "http_client", "unexpected keyword"]):
+                    print(f"      [DEBUG] Retrying with basic instance due to API mismatch: {inner_e}")
+                    api = YouTubeTranscriptApi()
+                    transcript_list = api.list(video_id)
+                    transcript = transcript_list.find_transcript(['ko', 'ko-KR'])
+                    data = transcript.fetch()
+                    return " ".join([i.get('text', '') for i in data])
+                raise inner_e
+
         except Exception as e:
-            if "429" in str(e) or "too many requests" in str(e).lower() or "no element found" in str(e).lower():
+            error_str = str(e).lower()
+            if any(x in error_str for x in ["429", "too many requests", "no element found", "unavailable"]):
+                print(f"  > [API BLOCKED/UNAVAILABLE] YouTube API issues ({e}). Attempting yt-dlp fallback...")
                 fallback_text = get_transcript_via_ytdlp(video_id)
                 if fallback_text: return fallback_text
-                time.sleep(15)
-            else: break
+                if "unavailable" not in error_str:
+                    time.sleep(15)
+            else:
+                print(f"  > Transcript Error for {video_id}: {e}")
+                # API 실패 시 즉시 yt-dlp 시도
+                fallback_text = get_transcript_via_ytdlp(video_id)
+                if fallback_text: return fallback_text
+                break
         finally:
-            if os.path.exists(temp_cookie_path) and os.getenv("YOUTUBE_COOKIES"):
+            if os.path.exists(temp_cookie_path):
                 try: os.remove(temp_cookie_path)
                 except: pass
     return None
