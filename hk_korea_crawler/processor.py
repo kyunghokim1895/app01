@@ -26,7 +26,7 @@ load_dotenv()
 # .env 파일에 저장된 키를 가져옵니다.
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-CHANNEL_ID = "UC3p-0EWA8OXko2EUDUXAy5w" # 서울경제TV 공식 채널 ID
+CHANNEL_ID = "UCGCGxsbmG_9nincyI7xypow" # 한경 코리아마켓 채널 ID
 
 # 서비스 초기화
 analysis_service = AnalysisService(GEMINI_API_KEY)
