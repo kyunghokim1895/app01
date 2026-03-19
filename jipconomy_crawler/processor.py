@@ -25,7 +25,7 @@ load_dotenv()
 # === 설정 ===
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-CHANNEL_ID = "UCG4T3In9f0eYI0V0IosV2uA" # 집코노미TV 전용 채널 ID
+CHANNEL_ID = "UCAVdqlngIAxHtwlCA2hjv3A" # 집코노미TV 전용 채널 ID
 
 # 서비스 초기화
 analysis_service = AnalysisService(GEMINI_API_KEY)
