@@ -59,8 +59,9 @@ for crawler_dir in "${(@k)CRAWLERS}"; do
     
     # 병렬 실행 시에는 앱 간 대기 불필요, 단일 실행 시에도 다음 앱이 없으면 대기 불필요
     if [[ "$TARGET_APP" == "" ]]; then
-        sleep_time=$(( 30 + RANDOM % 31 ))
-        echo "Waiting $sleep_time seconds before next app..." | tee -a "$LOG_FILE"
+        # DNS 및 네트워크 안정화를 위해 대기 시간을 60~120초로 늘림
+        sleep_time=$(( 60 + RANDOM % 61 ))
+        echo "Waiting $sleep_time seconds before next app (for Network/DNS stability)..." | tee -a "$LOG_FILE"
         sleep $sleep_time
     fi
     
