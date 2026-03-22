@@ -33,6 +33,15 @@ const HomeScreen = ({ navigation, route }: any) => {
         setSearch(keyword);
     }, []);
 
+    // 카테고리별 영상 수 계산
+    const categoryCounts = React.useMemo(() => {
+        const counts: Record<string, number> = {};
+        for (const cat of CATEGORIES) {
+            counts[cat] = data.filter(item => item.category === cat).length;
+        }
+        return counts;
+    }, [data]);
+
     const filteredData = data.filter(item => {
         const matchesSearch = search
             ? item.title.includes(search) ||
@@ -80,6 +89,17 @@ const HomeScreen = ({ navigation, route }: any) => {
                                 styles.categoryText,
                                 selectedCategory === item && styles.selectedCategoryText
                             ]}>{item}</Text>
+                            {categoryCounts[item] > 0 && (
+                                <View style={[
+                                    styles.countBadge,
+                                    selectedCategory === item && styles.selectedCountBadge
+                                ]}>
+                                    <Text style={[
+                                        styles.countText,
+                                        selectedCategory === item && styles.selectedCountText
+                                    ]}>{categoryCounts[item]}</Text>
+                                </View>
+                            )}
                         </TouchableOpacity>
                     )}
                 />
@@ -156,7 +176,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     categoryChip: {
-        paddingHorizontal: 15,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 12,
         paddingVertical: 8,
         backgroundColor: '#f0f0f0',
         borderRadius: 20,
@@ -170,6 +192,27 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     selectedCategoryText: {
+        color: '#fff',
+    },
+    countBadge: {
+        backgroundColor: '#ccc',
+        borderRadius: 10,
+        minWidth: 20,
+        height: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 6,
+        paddingHorizontal: 5,
+    },
+    selectedCountBadge: {
+        backgroundColor: 'rgba(255,255,255,0.3)',
+    },
+    countText: {
+        fontSize: 11,
+        fontWeight: 'bold',
+        color: '#fff',
+    },
+    selectedCountText: {
         color: '#fff',
     },
     loader: {
