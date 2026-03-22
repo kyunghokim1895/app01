@@ -36,26 +36,29 @@ def init_db():
             summaryList TEXT,
             keywords TEXT,
             publishedAt TEXT,
-            videoUrl TEXT
+            videoUrl TEXT,
+            category TEXT DEFAULT ''
         )
     ''')
+    try:
+        cursor.execute("ALTER TABLE videos ADD COLUMN category TEXT DEFAULT ''")
+    except:
+        pass
     conn.commit()
     conn.close()
 
 def main():
     init_db()
 
-    # 1. 기존 JSON 데이터 로드
     existing_data = []
     if os.path.exists(JSON_OUTPUT_PATH):
         try:
             with open(JSON_OUTPUT_PATH, "r", encoding="utf-8") as f: existing_data = json.load(f)
         except: pass
 
-    # 2. DB에서 모든 데이터 읽어서 JSON과 동기화
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    cursor.execute("SELECT id, title, summary, summaryList, keywords, publishedAt, videoUrl FROM videos WHERE summary IS NOT NULL AND summary != ''")
+    cursor.execute("SELECT id, title, summary, summaryList, keywords, publishedAt, videoUrl, COALESCE(category, '') FROM videos WHERE summary IS NOT NULL AND summary != ''")
     db_rows = cursor.fetchall()
 
     db_data = []
@@ -64,11 +67,10 @@ def main():
             db_data.append({
                 "id": row[0], "title": row[1], "summary": row[2],
                 "summaryList": json.loads(row[3]), "keywords": json.loads(row[4]),
-                "publishedAt": row[5], "videoUrl": row[6]
+                "publishedAt": row[5], "videoUrl": row[6], "category": row[7]
             })
         except: pass
 
-    # 병합 및 정렬
     all_data = db_data + existing_data
     unique_data = {item['id']: item for item in all_data}.values()
     sorted_data = sorted(unique_data, key=lambda x: x.get('publishedAt', ''), reverse=True)
@@ -80,7 +82,6 @@ def main():
     existing_data = list(unique_data)
     existing_ids = {item['id'] for item in existing_data}
 
-    # 3. 신규 비디오 확인 및 처리
     videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
 
     for i, v in enumerate(videos):
@@ -91,7 +92,6 @@ def main():
 
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']}")
 
-        # 제목+설명 기반 Gemini 분석
         analysis = analysis_service.summarize_from_metadata(
             v['title'], v.get('description', ''), CHANNEL_NAME
         )
@@ -100,18 +100,18 @@ def main():
             print(f"   => Failed to get valid summary for {v['id']}")
             continue
 
-        cursor.execute("REPLACE INTO videos VALUES (?,?,?,?,?,?,?)", (
+        cursor.execute("REPLACE INTO videos VALUES (?,?,?,?,?,?,?,?)", (
             v['id'], v['title'], analysis['summary'],
             json.dumps(analysis['summaryList'], ensure_ascii=False),
             json.dumps(analysis['keywords'], ensure_ascii=False),
-            v['publishedAt'], v['videoUrl']
+            v['publishedAt'], v['videoUrl'], analysis.get('category', '')
         ))
         conn.commit()
 
-        # 실시간 JSON 업데이트
         new_item = {
             "id": v['id'], "title": v['title'], "summary": analysis['summary'],
             "summaryList": analysis['summaryList'], "keywords": analysis['keywords'],
+            "category": analysis.get('category', ''),
             "publishedAt": v['publishedAt'], "videoUrl": v['videoUrl']
         }
 

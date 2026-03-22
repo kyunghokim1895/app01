@@ -4,11 +4,11 @@ import SummaryCard from '../components/SummaryCard';
 import { fetchSummaries } from '../services/dataService';
 import { theme } from '../constants/theme';
 
-const DUMMY_KEYWORDS = ['#미국주식', '#엔비디아', '#테슬라', '#연준', '#비트코인', '#AI', '#삼성전자'];
+const CATEGORIES = ['국내증시', '해외증시', '부동산', '가상자산', '경제정책', '산업/기업', '채권/환율', '재테크'];
 
 const HomeScreen = ({ navigation }: any) => {
     const [search, setSearch] = useState('');
-    const [selectedKeyword, setSelectedKeyword] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -20,9 +20,8 @@ const HomeScreen = ({ navigation }: any) => {
         setLoading(true);
         const result = await fetchSummaries();
 
-        // 간단한 알림 기능 시뮬레이션: 새로운 데이터가 있으면 알림
         if (result.length > 0 && data.length > 0 && result[0].id !== data[0].id) {
-            Alert.alert('🔔 새 요약 도착', `'${result[0].title}' 등 새로운 핵심 요약이 업데이트되었습니다.`);
+            Alert.alert('새 요약 도착', `'${result[0].title}' 등 새로운 핵심 요약이 업데이트되었습니다.`);
         }
 
         setData(result);
@@ -30,18 +29,21 @@ const HomeScreen = ({ navigation }: any) => {
     };
 
     const filteredData = data.filter(item => {
-        const matchesSearch = item.title.includes(search) || item.summary.includes(search);
-        const matchesKeyword = selectedKeyword ? item.keywords.includes(selectedKeyword) : true;
-        return matchesSearch && matchesKeyword;
+        const matchesSearch = search
+            ? item.title.includes(search) || item.summary.includes(search)
+            : true;
+        const matchesCategory = selectedCategory
+            ? item.category === selectedCategory
+            : true;
+        return matchesSearch && matchesCategory;
     });
 
     return (
         <View style={styles.container}>
-            {/* 키워드 검색 및 선택 영역 */}
             <View style={styles.headerSection}>
                 <TextInput
                     style={styles.searchInput}
-                    placeholder="관심 키워드를 입력하세요"
+                    placeholder="검색어를 입력하세요"
                     placeholderTextColor="#888"
                     value={search}
                     onChangeText={setSearch}
@@ -49,27 +51,26 @@ const HomeScreen = ({ navigation }: any) => {
                 <FlatList
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    data={DUMMY_KEYWORDS}
+                    data={CATEGORIES}
                     keyExtractor={(item) => item}
-                    style={styles.keywordList}
+                    style={styles.categoryList}
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={[
-                                styles.keywordChip,
-                                selectedKeyword === item && styles.selectedChip
+                                styles.categoryChip,
+                                selectedCategory === item && styles.selectedChip
                             ]}
-                            onPress={() => setSelectedKeyword(item === selectedKeyword ? '' : item)}
+                            onPress={() => setSelectedCategory(item === selectedCategory ? '' : item)}
                         >
                             <Text style={[
-                                styles.keywordText,
-                                selectedKeyword === item && styles.selectedKeywordText
+                                styles.categoryText,
+                                selectedCategory === item && styles.selectedCategoryText
                             ]}>{item}</Text>
                         </TouchableOpacity>
                     )}
                 />
             </View>
 
-            {/* 요약 목록 영역 */}
             {loading ? (
                 <View style={styles.loader}>
                     <ActivityIndicator size="large" color={theme.primary} />
@@ -113,10 +114,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
     },
-    keywordList: {
+    categoryList: {
         flexDirection: 'row',
     },
-    keywordChip: {
+    categoryChip: {
         paddingHorizontal: 15,
         paddingVertical: 8,
         backgroundColor: '#f0f0f0',
@@ -126,11 +127,11 @@ const styles = StyleSheet.create({
     selectedChip: {
         backgroundColor: theme.primary,
     },
-    keywordText: {
+    categoryText: {
         color: '#666',
         fontWeight: '500',
     },
-    selectedKeywordText: {
+    selectedCategoryText: {
         color: '#fff',
     },
     loader: {

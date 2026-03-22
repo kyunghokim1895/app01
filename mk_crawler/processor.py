@@ -37,16 +37,20 @@ def init_db():
             summaryList TEXT,
             keywords TEXT,
             publishedAt TEXT,
-            videoUrl TEXT
+            videoUrl TEXT,
+            category TEXT DEFAULT ''
         )
     ''')
+    try:
+        cursor.execute("ALTER TABLE videos ADD COLUMN category TEXT DEFAULT ''")
+    except:
+        pass
     conn.commit()
     conn.close()
 
 def main():
     init_db()
 
-    # 1. 기존 JSON 데이터 로드
     existing_data = []
     if os.path.exists(JSON_OUTPUT_PATH):
         try:
@@ -58,7 +62,6 @@ def main():
 
     existing_ids = {item['id'] for item in existing_data}
 
-    # 2. 영상 목록 가져오기
     videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
     print(f"  > [DEBUG] YouTube API returned total {len(videos)} videos.")
 
@@ -77,7 +80,6 @@ def main():
 
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']} ({v['id']})")
 
-        # 제목+설명 기반 Gemini 분석
         analysis = analysis_service.summarize_from_metadata(
             v['title'], v.get('description', ''), CHANNEL_NAME
         )
@@ -87,14 +89,15 @@ def main():
             continue
 
         cursor.execute("""
-            INSERT INTO videos (id, title, summary, summaryList, keywords, publishedAt, videoUrl)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO videos (id, title, summary, summaryList, keywords, publishedAt, videoUrl, category)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             v['id'], v['title'],
             analysis.get("summary", ""),
             json.dumps(analysis.get("summaryList", []), ensure_ascii=False),
             json.dumps(analysis.get("keywords", []), ensure_ascii=False),
-            v['publishedAt'], v['videoUrl']
+            v['publishedAt'], v['videoUrl'],
+            analysis.get("category", "")
         ))
         conn.commit()
 
@@ -104,18 +107,17 @@ def main():
             "summary": analysis.get("summary", ""),
             "summaryList": analysis.get("summaryList", []),
             "keywords": analysis.get("keywords", []),
+            "category": analysis.get("category", ""),
             "publishedAt": v['publishedAt'],
             "videoUrl": v['videoUrl']
         })
 
-        time.sleep(5) # Gemini Free Tier RPM 준수
+        time.sleep(5)
 
     conn.close()
 
-    # 결과 병합
     final_data = new_entries + existing_data
 
-    # [FALLBACK] 데이터가 없으면 더미 데이터 생성
     if not final_data:
         print("  > 크롤링 실패 또는 데이터 없음. 더미 데이터를 생성합니다.")
         final_data = [
@@ -131,12 +133,12 @@ def main():
                     "5. 공급망 제약 문제가 리스크 요인으로 지적됩니다."
                 ],
                 "keywords": ["#엔비디아", "#AI반도체", "#미국주식", "#실적발표"],
+                "category": "해외증시",
                 "publishedAt": datetime.now().strftime("%Y-%m-%d"),
                 "videoUrl": "https://www.youtube.com/watch?v=example1"
             }
         ]
 
-    # JSON 출력
     os.makedirs(os.path.dirname(JSON_OUTPUT_PATH), exist_ok=True)
     with open(JSON_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(final_data, f, ensure_ascii=False, indent=2)

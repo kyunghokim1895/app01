@@ -37,9 +37,15 @@ def init_db():
             summaryList TEXT,
             keywords TEXT,
             publishedAt TEXT,
-            videoUrl TEXT
+            videoUrl TEXT,
+            category TEXT DEFAULT ''
         )
     ''')
+    # 기존 DB에 category 컬럼이 없을 경우 추가
+    try:
+        cursor.execute("ALTER TABLE videos ADD COLUMN category TEXT DEFAULT ''")
+    except:
+        pass
     conn.commit()
     conn.close()
 
@@ -77,7 +83,6 @@ def main():
 
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']} ({v['id']})")
 
-        # 제목+설명 기반 Gemini 분석
         analysis = analysis_service.summarize_from_metadata(
             v['title'], v.get('description', ''), CHANNEL_NAME
         )
@@ -87,14 +92,15 @@ def main():
             continue
 
         cursor.execute("""
-            INSERT INTO videos (id, title, summary, summaryList, keywords, publishedAt, videoUrl)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO videos (id, title, summary, summaryList, keywords, publishedAt, videoUrl, category)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             v['id'], v['title'],
             analysis.get("summary", ""),
             json.dumps(analysis.get("summaryList", []), ensure_ascii=False),
             json.dumps(analysis.get("keywords", []), ensure_ascii=False),
-            v['publishedAt'], v['videoUrl']
+            v['publishedAt'], v['videoUrl'],
+            analysis.get("category", "")
         ))
         conn.commit()
 
@@ -104,18 +110,17 @@ def main():
             "summary": analysis.get("summary", ""),
             "summaryList": analysis.get("summaryList", []),
             "keywords": analysis.get("keywords", []),
+            "category": analysis.get("category", ""),
             "publishedAt": v['publishedAt'],
             "videoUrl": v['videoUrl']
         })
 
-        time.sleep(5) # Gemini Free Tier RPM 준수
+        time.sleep(5)
 
     conn.close()
 
-    # 결과 병합 (새로운 것 + 기존 것)
     final_data = new_entries + existing_data
 
-    # JSON 출력
     os.makedirs(os.path.dirname(JSON_OUTPUT_PATH), exist_ok=True)
     with open(JSON_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(final_data, f, ensure_ascii=False, indent=2)
