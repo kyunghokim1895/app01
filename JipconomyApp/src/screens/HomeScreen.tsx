@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import SummaryCard from '../components/SummaryCard';
 import { fetchSummaries } from '../services/dataService';
 import { theme } from '../constants/theme';
 
-const CATEGORIES = ['국내증시', '해외증시', '부동산', '가상자산', '경제정책', '산업/기업', '채권/환율', '재테크'];
-
 const HomeScreen = ({ navigation }: any) => {
     const [search, setSearch] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState('');
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -28,47 +25,34 @@ const HomeScreen = ({ navigation }: any) => {
         setLoading(false);
     };
 
+    const handleKeywordPress = useCallback((keyword: string) => {
+        setSearch(keyword);
+    }, []);
+
     const filteredData = data.filter(item => {
-        const matchesSearch = search
-            ? item.title.includes(search) || item.summary.includes(search)
-            : true;
-        const matchesCategory = selectedCategory
-            ? item.category === selectedCategory
-            : true;
-        return matchesSearch && matchesCategory;
+        if (!search) return true;
+        return item.title.includes(search) ||
+               item.summary.includes(search) ||
+               (item.keywords && item.keywords.some((k: string) => k.includes(search)));
     });
 
     return (
         <View style={styles.container}>
             <View style={styles.headerSection}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="검색어를 입력하세요"
-                    placeholderTextColor="#888"
-                    value={search}
-                    onChangeText={setSearch}
-                />
-                <FlatList
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    data={CATEGORIES}
-                    keyExtractor={(item) => item}
-                    style={styles.categoryList}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={[
-                                styles.categoryChip,
-                                selectedCategory === item && styles.selectedChip
-                            ]}
-                            onPress={() => setSelectedCategory(item === selectedCategory ? '' : item)}
-                        >
-                            <Text style={[
-                                styles.categoryText,
-                                selectedCategory === item && styles.selectedCategoryText
-                            ]}>{item}</Text>
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="검색어를 입력하세요"
+                        placeholderTextColor="#888"
+                        value={search}
+                        onChangeText={setSearch}
+                    />
+                    {search.length > 0 && (
+                        <TouchableOpacity style={styles.clearButton} onPress={() => setSearch('')}>
+                            <Text style={styles.clearButtonText}>✕</Text>
                         </TouchableOpacity>
                     )}
-                />
+                </View>
             </View>
 
             {loading ? (
@@ -82,7 +66,11 @@ const HomeScreen = ({ navigation }: any) => {
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={{ paddingBottom: 200 }}
                     renderItem={({ item }) => (
-                        <SummaryCard item={item} onPress={() => navigation.navigate('Detail', { item })} />
+                        <SummaryCard
+                            item={item}
+                            onPress={() => navigation.navigate('Detail', { item })}
+                            onKeywordPress={handleKeywordPress}
+                        />
                     )}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
@@ -105,34 +93,33 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
     },
+    searchContainer: {
+        position: 'relative',
+        justifyContent: 'center',
+    },
     searchInput: {
         height: 45,
         backgroundColor: '#f5f5f5',
         borderRadius: 10,
         paddingHorizontal: 15,
-        marginBottom: 10,
+        paddingRight: 40,
         fontSize: 16,
         color: '#333',
     },
-    categoryList: {
-        flexDirection: 'row',
+    clearButton: {
+        position: 'absolute',
+        right: 12,
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    categoryChip: {
-        paddingHorizontal: 15,
-        paddingVertical: 8,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 20,
-        marginRight: 8,
-    },
-    selectedChip: {
-        backgroundColor: theme.primary,
-    },
-    categoryText: {
-        color: '#666',
-        fontWeight: '500',
-    },
-    selectedCategoryText: {
+    clearButtonText: {
         color: '#fff',
+        fontSize: 12,
+        fontWeight: 'bold',
     },
     loader: {
         flex: 1,

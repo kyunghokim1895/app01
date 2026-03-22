@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import SummaryCard from '../components/SummaryCard';
 import { fetchSummaries } from '../services/dataService';
@@ -22,9 +22,15 @@ const HomeScreen = ({ navigation }: any) => {
         setLoading(false);
     };
 
+    const handleKeywordPress = useCallback((keyword: string) => {
+        setSearch(keyword);
+    }, []);
+
     const filteredData = data.filter(item => {
         const matchesSearch = search
-            ? item.title.includes(search) || item.summary.includes(search)
+            ? item.title.includes(search) ||
+              item.summary.includes(search) ||
+              (item.keywords && item.keywords.some((k: string) => k.includes(search)))
             : true;
         const matchesCategory = selectedCategory
             ? item.category === selectedCategory
@@ -35,13 +41,20 @@ const HomeScreen = ({ navigation }: any) => {
     return (
         <View style={styles.container}>
             <View style={styles.headerSection}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder="검색어를 입력하세요"
-                    placeholderTextColor="#888"
-                    value={search}
-                    onChangeText={setSearch}
-                />
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder="검색어를 입력하세요"
+                        placeholderTextColor="#888"
+                        value={search}
+                        onChangeText={setSearch}
+                    />
+                    {search.length > 0 && (
+                        <TouchableOpacity style={styles.clearButton} onPress={() => setSearch('')}>
+                            <Text style={styles.clearButtonText}>✕</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
                 <FlatList
                     horizontal
                     showsHorizontalScrollIndicator={false}
@@ -76,7 +89,11 @@ const HomeScreen = ({ navigation }: any) => {
                     keyExtractor={(item) => item.id}
                     contentContainerStyle={{ paddingBottom: 200 }}
                     renderItem={({ item }) => (
-                        <SummaryCard item={item} onPress={() => navigation.navigate('Detail', { item })} />
+                        <SummaryCard
+                            item={item}
+                            onPress={() => navigation.navigate('Detail', { item })}
+                            onKeywordPress={handleKeywordPress}
+                        />
                     )}
                     ListEmptyComponent={
                         <View style={styles.emptyContainer}>
@@ -99,14 +116,34 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#eee',
     },
+    searchContainer: {
+        position: 'relative',
+        justifyContent: 'center',
+        marginBottom: 10,
+    },
     searchInput: {
         height: 45,
         backgroundColor: '#f5f5f5',
         borderRadius: 10,
         paddingHorizontal: 15,
-        marginBottom: 10,
+        paddingRight: 40,
         fontSize: 16,
         color: '#333',
+    },
+    clearButton: {
+        position: 'absolute',
+        right: 12,
+        width: 24,
+        height: 24,
+        borderRadius: 12,
+        backgroundColor: '#ccc',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    clearButtonText: {
+        color: '#fff',
+        fontSize: 12,
+        fontWeight: 'bold',
     },
     categoryList: {
         flexDirection: 'row',

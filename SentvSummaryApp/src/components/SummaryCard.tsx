@@ -1,16 +1,20 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
-const SummaryCard = ({ item, onPress }) => {
+const SummaryCard = ({ item, onPress, onKeywordPress }) => {
     return (
         <TouchableOpacity style={styles.card} onPress={onPress}>
             <Text style={styles.date}>{item.publishedAt}</Text>
             <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
             <View style={styles.tagContainer}>
                 {item.keywords?.map((tag, index) => (
-                    <View key={index} style={styles.tagBox}>
+                    <TouchableOpacity
+                        key={index}
+                        style={styles.tagBox}
+                        onPress={() => onKeywordPress?.(tag?.trim())}
+                    >
                         <Text style={styles.tagText}>{tag?.trim()}</Text>
-                    </View>
+                    </TouchableOpacity>
                 ))}
             </View>
             <Text style={styles.summary} numberOfLines={3}>{item.summary}</Text>
