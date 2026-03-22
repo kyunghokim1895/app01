@@ -25,7 +25,6 @@ jobs:
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
-      YOUTUBE_COOKIES: ${{ secrets.YOUTUBE_COOKIES }}
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       PYTHONUNBUFFERED: "1"
 
@@ -41,7 +40,7 @@ jobs:
       - name: Install dependencies
         run: |
           export PATH="/opt/homebrew/bin:$PATH"
-          python3 -m pip install -U youtube-transcript-api google-generativeai google-api-python-client yt-dlp python-dotenv
+          python3 -m pip install -U google-generativeai google-api-python-client python-dotenv
 
       - name: Force Sync with Remote
         run: |

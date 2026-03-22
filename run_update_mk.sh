@@ -3,11 +3,12 @@
 
 # 프로젝트 루트 경로 (절대 경로 사용)
 PROJECT_ROOT="/Users/kimkyungho/Developer/app01"
+PYTHON_BIN="/Library/Frameworks/Python.framework/Versions/3.11/bin/python3"
 DATA_FILE="MKSummaryApp/src/services/data.json"
 
 echo "--- 1. 최신 뉴스 요약 시작 (매경 월가월부) ---"
 cd "$PROJECT_ROOT/mk_crawler" || exit
-python3 processor.py
+"$PYTHON_BIN" processor.py
 
 echo "--- 2. GitHub 업데이트 (앱 데이터 동기화) ---"
 cd "$PROJECT_ROOT" || exit

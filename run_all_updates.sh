@@ -3,6 +3,7 @@
 
 # 스크립트 위치를 기준으로 프로젝트 루트 설정 (경로 하드코딩 제거)
 PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
+PYTHON_BIN="/Library/Frameworks/Python.framework/Versions/3.11/bin/python3"
 LOG_FILE="$PROJECT_ROOT/update_log.txt"
 
 echo "--- 업데이트 시작: $(date +'%Y-%m-%d %H:%M:%S') ---" | tee -a "$LOG_FILE"
@@ -55,13 +56,13 @@ for crawler_dir in "${(@k)CRAWLERS}"; do
     echo "Processing $crawler_dir..." | tee -a "$LOG_FILE"
     
     cd "$PROJECT_ROOT/$crawler_dir" || continue
-    python3 processor.py 2>&1 | tee -a "$LOG_FILE"
+    "$PYTHON_BIN" processor.py 2>&1 | tee -a "$LOG_FILE"
     
     # 병렬 실행 시에는 앱 간 대기 불필요, 단일 실행 시에도 다음 앱이 없으면 대기 불필요
     if [[ "$TARGET_APP" == "" ]]; then
-        # DNS 및 네트워크 안정화를 위해 대기 시간을 60~120초로 늘림
-        sleep_time=$(( 60 + RANDOM % 61 ))
-        echo "Waiting $sleep_time seconds before next app (for Network/DNS stability)..." | tee -a "$LOG_FILE"
+        # 다음 앱 처리 전 짧은 대기 (Gemini API 안정화)
+        sleep_time=$(( 5 + RANDOM % 6 ))
+        echo "Waiting $sleep_time seconds before next app..." | tee -a "$LOG_FILE"
         sleep $sleep_time
     fi
     
@@ -89,9 +90,6 @@ else
 fi
 
 echo "Cleaning up temporary files..." | tee -a "$LOG_FILE"
-rm -f "$PROJECT_ROOT"/temp_video_*.part >> "$LOG_FILE" 2>&1
-rm -f "$PROJECT_ROOT"/temp_audio_*.m4a >> "$LOG_FILE" 2>&1
-rm -f "$PROJECT_ROOT"/temp_sub_* >> "$LOG_FILE" 2>&1
 
 echo "--- 모든 앱 업데이트 프로세스 완료: $(date +'%Y-%m-%d %H:%M:%S') ---" | tee -a "$LOG_FILE"
 

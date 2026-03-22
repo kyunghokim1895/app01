@@ -2,19 +2,10 @@ import os
 import sys
 import sqlite3
 import json
-import random
-from datetime import datetime, timedelta
 import time
-import subprocess
-import re
-import glob
-from youtube_transcript_api import YouTubeTranscriptApi
-import google.generativeai as genai
-import googleapiclient.discovery
+from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-import sys
-import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.core.youtube_service import get_video_list
 from src.core.analysis_service import AnalysisService
@@ -23,10 +14,10 @@ from src.core.analysis_service import AnalysisService
 load_dotenv()
 
 # === 설정 ===
-# .env 파일에 저장된 키를 가져옵니다.
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 CHANNEL_ID = "UC3p-0EWA8OXko2EUDUXAy5w" # 서울경제TV 공식 채널 ID
+CHANNEL_NAME = "서울경제TV"
 
 # 서비스 초기화
 analysis_service = AnalysisService(GEMINI_API_KEY)
@@ -51,14 +42,11 @@ def init_db():
     ''')
     conn.commit()
     conn.close()
-# --- 중복 로직 삭제됨 (AnalysisService로 통합) ---
-
 
 def main():
     init_db()
-    
-    # 1. 기존 JSON 데이터 로드 (메모리 역할)
-    # GitHub Action 환경은 DB파일이 초기화되므로 JSON을 기본 저장소로 활용합니다.
+
+    # 1. 기존 JSON 데이터 로드
     existing_data = []
     if os.path.exists(JSON_OUTPUT_PATH):
         try:
@@ -67,62 +55,50 @@ def main():
             print(f"  > 로컬 JSON에서 {len(existing_data)}개의 기존 데이터를 불러왔습니다.")
         except Exception as e:
             print(f"  > JSON 로드 중 오류: {e}")
-            
+
     existing_ids = {item['id'] for item in existing_data}
 
-    # 2. 영상 목록 가져오기 (2026년 이후 전수 조사)
+    # 2. 영상 목록 가져오기
     videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
     print(f"  > [DEBUG] YouTube API returned total {len(videos)} videos.")
-    
+
     if not videos:
         print("  > [WARNING] No videos found. Check Channel ID or API Key.")
-    
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
+
     new_entries = []
-    
+
     for i, v in enumerate(videos):
-        # 3. DB 또는 기존 JSON에 있는지 확인
         cursor.execute("SELECT id FROM videos WHERE id=?", (v['id'],))
         if cursor.fetchone() or v['id'] in existing_ids:
             continue
-            
+
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']} ({v['id']})")
-        
-        # 유튜브 부하 분산을 위한 랜덤 대기 (인간처럼 보이게 함)
-        time.sleep(10 + random.random() * 10)
-            
-        # 자막 추출 시도
-        transcript = analysis_service.get_transcript(v['id'])
-        
-        if transcript:
-            print(f"  > [OK] Transcript found (Length: {len(transcript)}). Summarizing...")
-            analysis = analysis_service.summarize_with_gemini(transcript, "서울경제TV")
-        else:
-            # 최종 수단: 직접 듣기
-            analysis = analysis_service.summarize_from_audio(v['id'])
-            
+
+        # 제목+설명 기반 Gemini 분석
+        analysis = analysis_service.summarize_from_metadata(
+            v['title'], v.get('description', ''), CHANNEL_NAME
+        )
+
         if not analysis:
-            print(f"  > [ERROR] All summarization methods failed for {v['id']}")
+            print(f"  > [ERROR] Summarization failed for {v['id']}")
             continue
-            
-        # DB에 즉시 저장 (중간에 멈춰도 데이터 보존)
+
         cursor.execute("""
             INSERT INTO videos (id, title, summary, summaryList, keywords, publishedAt, videoUrl)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         """, (
-            v['id'], 
-            v['title'], 
-            analysis.get("summary", ""), 
+            v['id'], v['title'],
+            analysis.get("summary", ""),
             json.dumps(analysis.get("summaryList", []), ensure_ascii=False),
             json.dumps(analysis.get("keywords", []), ensure_ascii=False),
-            v['publishedAt'],
-            v['videoUrl']
+            v['publishedAt'], v['videoUrl']
         ))
         conn.commit()
-        
-        entry = {
+
+        new_entries.append({
             "id": v['id'],
             "title": v['title'],
             "summary": analysis.get("summary", ""),
@@ -130,23 +106,21 @@ def main():
             "keywords": analysis.get("keywords", []),
             "publishedAt": v['publishedAt'],
             "videoUrl": v['videoUrl']
-        }
-        
-        new_entries.append(entry)
-        time.sleep(5) # Gemini Free Tier RPM(15) 준수를 위해 넉넉히 대기
-        
+        })
+
+        time.sleep(5) # Gemini Free Tier RPM 준수
+
     conn.close()
-    
-    # 4. 결과 병합 (새로운 것 + 기존 것)
-    # get_video_list가 최신순으로 가져오므로 new_entries를 앞에 둠
+
+    # 결과 병합 (새로운 것 + 기존 것)
     final_data = new_entries + existing_data
-    
-    # JSON 출력 (앱에서 사용)
+
+    # JSON 출력
     os.makedirs(os.path.dirname(JSON_OUTPUT_PATH), exist_ok=True)
     with open(JSON_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(final_data, f, ensure_ascii=False, indent=2)
-        
-    print(f"\nDone! Saved {len(final_data)} summaries to {JSON_OUTPUT_PATH}")
+
+    print(f"\nDone! Saved {len(final_data)} entries to {JSON_OUTPUT_PATH}")
 
 if __name__ == "__main__":
     main()
