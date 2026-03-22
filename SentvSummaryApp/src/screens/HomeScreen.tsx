@@ -5,7 +5,7 @@ import { fetchSummaries } from '../services/dataService';
 
 const CATEGORIES = ['국내증시', '해외증시', '부동산', '가상자산', '경제정책', '산업/기업', '채권/환율', '재테크'];
 
-const HomeScreen = ({ navigation }: any) => {
+const HomeScreen = ({ navigation, route }: any) => {
     const [search, setSearch] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
     const [data, setData] = useState<any[]>([]);
@@ -14,6 +14,13 @@ const HomeScreen = ({ navigation }: any) => {
     useEffect(() => {
         loadData();
     }, []);
+
+    // DetailScreen에서 키워드 탭으로 돌아왔을 때 검색어 설정
+    useEffect(() => {
+        if (route?.params?.searchKeyword) {
+            setSearch(route.params.searchKeyword);
+        }
+    }, [route?.params?.searchKeyword]);
 
     const loadData = async () => {
         setLoading(true);

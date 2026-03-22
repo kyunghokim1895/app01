@@ -4,7 +4,7 @@ import SummaryCard from '../components/SummaryCard';
 import { fetchSummaries } from '../services/dataService';
 import { theme } from '../constants/theme';
 
-const HomeScreen = ({ navigation }: any) => {
+const HomeScreen = ({ navigation, route }: any) => {
     const [search, setSearch] = useState('');
     const [data, setData] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -12,6 +12,13 @@ const HomeScreen = ({ navigation }: any) => {
     useEffect(() => {
         loadData();
     }, []);
+
+    // DetailScreen에서 키워드 탭으로 돌아왔을 때 검색어 설정
+    useEffect(() => {
+        if (route?.params?.searchKeyword) {
+            setSearch(route.params.searchKeyword);
+        }
+    }, [route?.params?.searchKeyword]);
 
     const loadData = async () => {
         setLoading(true);

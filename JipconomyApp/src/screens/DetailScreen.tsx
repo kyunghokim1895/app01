@@ -11,12 +11,16 @@ const DetailScreen = ({ route, navigation }: any) => {
 
     const onShare = async () => {
         try {
-            const result = await Share.share({
-                message: `[매경 월가월부 요약]\n\n${item.title}\n\n${item.summary}\n\n영상 보기: ${item.videoUrl}`,
+            await Share.share({
+                message: `[집코노미TV 요약]\n\n${item.title}\n\n${item.summary}\n\n영상 보기: ${item.videoUrl}`,
             });
         } catch (error: any) {
             console.error(error.message);
         }
+    };
+
+    const onKeywordPress = (keyword: string) => {
+        navigation.navigate('Home', { searchKeyword: keyword });
     };
 
     React.useLayoutEffect(() => {
@@ -37,9 +41,9 @@ const DetailScreen = ({ route, navigation }: any) => {
 
                 <View style={styles.tagContainer}>
                     {item.keywords?.map((tag: string, index: number) => (
-                        <View key={index} style={styles.tagBox}>
+                        <TouchableOpacity key={index} style={styles.tagBox} onPress={() => onKeywordPress(tag?.trim())}>
                             <Text style={styles.tagText}>{tag?.trim()}</Text>
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </View>
 
@@ -47,7 +51,6 @@ const DetailScreen = ({ route, navigation }: any) => {
                     <Text style={styles.summaryLabel}>핵심 요약</Text>
                     {item.summaryList ? (
                         item.summaryList.map((sentence: string, index: number) => {
-                            // "1. " 또는 "1. " 형태의 시작 번호 제거 (중복 방지)
                             const cleanedSentence = sentence.replace(/^\d+[\s\.]+\s*/, '');
                             return (
                                 <View key={index} style={styles.summaryItem}>

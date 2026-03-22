@@ -18,6 +18,10 @@ const DetailScreen = ({ route, navigation }: any) => {
         }
     };
 
+    const onKeywordPress = (keyword: string) => {
+        navigation.navigate('Home', { searchKeyword: keyword });
+    };
+
     React.useLayoutEffect(() => {
         if (navigation) {
             navigation.setOptions({
@@ -38,9 +42,9 @@ const DetailScreen = ({ route, navigation }: any) => {
 
                 <View style={styles.tagContainer}>
                     {item.keywords?.map((tag: string, index: number) => (
-                        <View key={index} style={styles.tagBox}>
+                        <TouchableOpacity key={index} style={styles.tagBox} onPress={() => onKeywordPress(tag?.trim())}>
                             <Text style={styles.tagText}>{tag?.trim()}</Text>
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </View>
 
@@ -48,7 +52,6 @@ const DetailScreen = ({ route, navigation }: any) => {
                     <Text style={styles.summaryLabel}>핵심 요약</Text>
                     {item.summaryList ? (
                         item.summaryList.map((sentence: string, index: number) => {
-                            // "1. " 또는 "1. " 형태의 시작 번호 제거 (중복 방지)
                             const cleanedSentence = sentence.replace(/^\d+[\s\.]+\s*/, '');
                             return (
                                 <View key={index} style={styles.summaryItem}>
