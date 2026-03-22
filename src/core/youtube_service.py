@@ -1,16 +1,15 @@
 import os
+import re
 import time
 import html
 from datetime import datetime, timedelta
 import googleapiclient.discovery
 
-def get_video_list(api_key, channel_id, days=7, max_results=30):
+def get_video_list(api_key, channel_id, days=7, max_results=None):
     """
     유튜브 API의 playlistItems 엔드포인트를 사용하여 최신 영상 목록을 가져옵니다.
-    search 대신 playlist(Uploads)를 조회하여 1 quota 단위로 저렴하게 검색합니다.
-    시스템 DNS 오류 대비 재시도 로직(최대 3회)을 포함합니다.
+    페이지네이션으로 기간 내 모든 영상을 수집한 뒤, 쇼츠(60초 이하)와 라이브 방송을 제외합니다.
     """
-    videos = []
     max_retries = 3
 
     for attempt in range(max_retries):
@@ -23,41 +22,60 @@ def get_video_list(api_key, channel_id, days=7, max_results=30):
 
             cutoff_date = datetime.now() - timedelta(days=days)
 
-            request = youtube.playlistItems().list(
-                part="snippet,contentDetails",
-                playlistId=uploads_playlist_id,
-                maxResults=max_results
-            )
-            response = request.execute()
+            # 1단계: 페이지네이션으로 기간 내 모든 영상 ID 수집
+            candidates = []
+            next_page = None
+            reached_cutoff = False
 
-            for item in response.get("items", []):
-                video_id = item["contentDetails"]["videoId"]
-                title = item["snippet"]["title"]
-                published_str = item["snippet"]["publishedAt"]
-                description = item["snippet"]["description"]
+            while not reached_cutoff:
+                request = youtube.playlistItems().list(
+                    part="snippet,contentDetails",
+                    playlistId=uploads_playlist_id,
+                    maxResults=50,
+                    pageToken=next_page
+                )
+                response = request.execute()
 
-                try:
-                    pub_date = datetime.fromisoformat(published_str.replace('Z', '+00:00'))
-                    if pub_date.tzinfo is None:
-                        cutoff_date = cutoff_date.replace(tzinfo=None)
-                    elif cutoff_date.tzinfo is None:
-                        cutoff_date = cutoff_date.replace(tzinfo=pub_date.tzinfo)
+                for item in response.get("items", []):
+                    video_id = item["contentDetails"]["videoId"]
+                    title = item["snippet"]["title"]
+                    published_str = item["snippet"]["publishedAt"]
+                    description = item["snippet"]["description"]
 
-                    if pub_date < cutoff_date:
+                    try:
+                        pub_date = datetime.fromisoformat(published_str.replace('Z', '+00:00'))
+                        if pub_date.tzinfo is None:
+                            cutoff_date = cutoff_date.replace(tzinfo=None)
+                        elif cutoff_date.tzinfo is None:
+                            cutoff_date = cutoff_date.replace(tzinfo=pub_date.tzinfo)
+
+                        if pub_date < cutoff_date:
+                            reached_cutoff = True
+                            break
+                    except Exception as e:
+                        print(f"   [API] Date parse error for {video_id}: {e}")
                         continue
-                except Exception as e:
-                    print(f"   [API] Date parse error for {video_id}: {e}")
-                    continue
 
-                videos.append({
-                    "id": video_id,
-                    "title": html.unescape(title),
-                    "description": description,
-                    "publishedAt": published_str[:10],
-                    "videoUrl": f"https://www.youtube.com/watch?v={video_id}"
-                })
+                    candidates.append({
+                        "id": video_id,
+                        "title": html.unescape(title),
+                        "description": description,
+                        "publishedAt": published_str[:10],
+                        "videoUrl": f"https://www.youtube.com/watch?v={video_id}"
+                    })
 
-            print(f"   [API] Found {len(videos)} recent videos within {days} days.")
+                next_page = response.get("nextPageToken")
+                if not next_page:
+                    break
+
+            print(f"   [API] Found {len(candidates)} candidates within {days} days.")
+
+            if not candidates:
+                return []
+
+            # 2단계: 쇼츠 및 라이브 필터링
+            videos = _filter_shorts_and_lives(youtube, candidates)
+            print(f"   [API] After filtering: {len(videos)} videos (excluded {len(candidates) - len(videos)} shorts/lives).")
             return videos
 
         except Exception as e:
@@ -73,4 +91,38 @@ def get_video_list(api_key, channel_id, days=7, max_results=30):
                 print(f"   [API ERROR] Non-DNS failure: {error_msg}")
                 break
 
-    return videos
+    return []
+
+
+def _filter_shorts_and_lives(youtube, candidates):
+    """쇼츠(60초 이하)와 라이브 방송을 제외합니다."""
+    video_ids = [v["id"] for v in candidates]
+    exclude_ids = set()
+
+    # 50개씩 배치로 조회
+    for i in range(0, len(video_ids), 50):
+        batch = video_ids[i:i+50]
+        request = youtube.videos().list(
+            part="contentDetails,liveStreamingDetails",
+            id=",".join(batch)
+        )
+        response = request.execute()
+
+        for item in response.get("items", []):
+            vid = item["id"]
+            duration = item["contentDetails"]["duration"]
+
+            # duration 파싱 (초 단위)
+            match = re.match(r'PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?', duration)
+            if match:
+                total_sec = int(match.group(1) or 0) * 3600 + int(match.group(2) or 0) * 60 + int(match.group(3) or 0)
+            else:
+                total_sec = 0
+
+            is_short = total_sec <= 60
+            is_live = "liveStreamingDetails" in item
+
+            if is_short or is_live:
+                exclude_ids.add(vid)
+
+    return [v for v in candidates if v["id"] not in exclude_ids]
