@@ -84,7 +84,7 @@ def main():
     with open(JSON_OUTPUT_PATH, "w", encoding="utf-8") as f:
         json.dump(sorted_data, f, ensure_ascii=False, indent=2)
 
-    existing_data = list(unique_data)
+    existing_data = list(unique_data.values())
     existing_ids = {item['id'] for item in existing_data}
 
     videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
