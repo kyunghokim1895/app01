@@ -72,8 +72,13 @@ def main():
         except: pass
 
     all_data = db_data + existing_data
-    unique_data = {item['id']: item for item in all_data}.values()
-    sorted_data = sorted(unique_data, key=lambda x: x.get('publishedAt', ''), reverse=True)
+    unique_data = {item['id']: item for item in all_data}
+    sorted_data = sorted(unique_data.values(), key=lambda x: x.get('publishedAt', ''), reverse=True)
+
+    # 안전장치: 데이터 감소 방지
+    if existing_data and len(sorted_data) < len(existing_data) * 0.9:
+        print(f"  > [SAFETY] 데이터 감소 감지! 기존 {len(existing_data)}개 → {len(sorted_data)}개. 저장을 거부합니다.")
+        return
 
     os.makedirs(os.path.dirname(JSON_OUTPUT_PATH), exist_ok=True)
     with open(JSON_OUTPUT_PATH, "w", encoding="utf-8") as f:

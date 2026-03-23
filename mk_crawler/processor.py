@@ -48,20 +48,47 @@ def init_db():
     conn.commit()
     conn.close()
 
+def load_existing_data(json_path):
+    """기존 JSON을 ID 기준 dict로 로드 (기존 데이터 보존 보장)"""
+    if not os.path.exists(json_path):
+        return {}
+    try:
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        print(f"  > 로컬 JSON에서 {len(data)}개의 기존 데이터를 불러왔습니다.")
+        return {item['id']: item for item in data}
+    except Exception as e:
+        print(f"  > JSON 로드 중 오류: {e}")
+        return {}
+
+
+def save_data(json_path, data_dict):
+    """데이터 저장 (감소 방지 안전장치 포함)"""
+    if os.path.exists(json_path):
+        try:
+            with open(json_path, "r", encoding="utf-8") as f:
+                old_count = len(json.load(f))
+            new_count = len(data_dict)
+            if new_count < old_count * 0.9:
+                print(f"  > [SAFETY] 데이터 감소 감지! 기존 {old_count}개 → {new_count}개. 저장을 거부합니다.")
+                return False
+        except Exception:
+            pass
+
+    data_list = sorted(data_dict.values(), key=lambda x: x.get('publishedAt', ''), reverse=True)
+    os.makedirs(os.path.dirname(json_path), exist_ok=True)
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(data_list, f, ensure_ascii=False, indent=2)
+    return True
+
+
 def main():
     init_db()
 
-    existing_data = []
-    if os.path.exists(JSON_OUTPUT_PATH):
-        try:
-            with open(JSON_OUTPUT_PATH, "r", encoding="utf-8") as f:
-                existing_data = json.load(f)
-            print(f"  > 로컬 JSON에서 {len(existing_data)}개의 기존 데이터를 불러왔습니다.")
-        except Exception as e:
-            print(f"  > JSON 로드 중 오류: {e}")
+    # 1. 기존 JSON 데이터를 ID 기준 dict로 로드
+    existing_dict = load_existing_data(JSON_OUTPUT_PATH)
 
-    existing_ids = {item['id'] for item in existing_data}
-
+    # 2. 영상 목록 가져오기
     videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
     print(f"  > [DEBUG] YouTube API returned total {len(videos)} videos.")
 
@@ -71,11 +98,11 @@ def main():
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    new_entries = []
+    new_count = 0
 
     for i, v in enumerate(videos):
         cursor.execute("SELECT id FROM videos WHERE id=?", (v['id'],))
-        if cursor.fetchone() or v['id'] in existing_ids:
+        if cursor.fetchone() or v['id'] in existing_dict:
             continue
 
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']} ({v['id']})")
@@ -101,7 +128,7 @@ def main():
         ))
         conn.commit()
 
-        new_entries.append({
+        existing_dict[v['id']] = {
             "id": v['id'],
             "title": v['title'],
             "summary": analysis.get("summary", ""),
@@ -110,40 +137,19 @@ def main():
             "category": analysis.get("category", ""),
             "publishedAt": v['publishedAt'],
             "videoUrl": v['videoUrl']
-        })
+        }
+        new_count += 1
 
         time.sleep(5)
 
     conn.close()
 
-    final_data = new_entries + existing_data
+    print(f"  > 신규 {new_count}개 추가. 총 {len(existing_dict)}개.")
 
-    if not final_data:
-        print("  > 크롤링 실패 또는 데이터 없음. 더미 데이터를 생성합니다.")
-        final_data = [
-            {
-                "id": "dummy_1",
-                "title": "엔비디아 실적 발표, AI 반도체 시장의 미래는?",
-                "summary": "엔비디아의 2분기 실적이 시장 예상치를 상회하며 AI 반도체 수요가 여전히 강력함을 입증했습니다.",
-                "summaryList": [
-                    "1. 엔비디아 분기 매출이 사상 최대치를 기록했습니다.",
-                    "2. 데이터센터 부문 매출이 전년 대비 3배 이상 증가했습니다.",
-                    "3. 젠슨 황 CEO는 AI가 티핑 포인트에 도달했다고 언급했습니다.",
-                    "4. 월가는 목표 주가를 상향 조정했습니다.",
-                    "5. 공급망 제약 문제가 리스크 요인으로 지적됩니다."
-                ],
-                "keywords": ["#엔비디아", "#AI반도체", "#미국주식", "#실적발표"],
-                "category": "해외증시",
-                "publishedAt": datetime.now().strftime("%Y-%m-%d"),
-                "videoUrl": "https://www.youtube.com/watch?v=example1"
-            }
-        ]
-
-    os.makedirs(os.path.dirname(JSON_OUTPUT_PATH), exist_ok=True)
-    with open(JSON_OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(final_data, f, ensure_ascii=False, indent=2)
-
-    print(f"\nDone! Saved {len(final_data)} entries to {JSON_OUTPUT_PATH}")
+    if save_data(JSON_OUTPUT_PATH, existing_dict):
+        print(f"\nDone! Saved {len(existing_dict)} entries to {JSON_OUTPUT_PATH}")
+    else:
+        print(f"\n[ERROR] 저장 실패 - 데이터 감소 방지 안전장치 작동")
 
 if __name__ == "__main__":
     main()
