@@ -38,6 +38,7 @@ CRAWLERS=(
     "hk_global_crawler" "HKGlobalApp/src/services/data.json"
     "hk_korea_crawler" "HKKoreaApp/src/services/data.json"
     "jipconomy_crawler" "JipconomyApp/src/services/data.json"
+    "hktv_global_crawler" "HKTVGlobalApp/src/services/data.json"
 )
 
 # 특정 앱 하나만 실행할 경우 (인자값 확인)

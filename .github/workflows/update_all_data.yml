@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        app: [crawler, mk_crawler, hk_global_crawler, hk_korea_crawler, jipconomy_crawler]
+        app: [crawler, mk_crawler, hk_global_crawler, hk_korea_crawler, jipconomy_crawler, hktv_global_crawler]
     
     # 동일한 앱이 중복 실행되는 것 방지
     concurrency:
