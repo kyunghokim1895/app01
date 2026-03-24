@@ -16,7 +16,7 @@
       "#국제정세",
       "#경제전망"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-24",
     "videoUrl": "https://www.youtube.com/watch?v=568zMycFqVQ"
   },
@@ -37,7 +37,7 @@
       "#장기충격",
       "#중동리스크"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-24",
     "videoUrl": "https://www.youtube.com/watch?v=vNGp-adx2RE"
   },
@@ -58,7 +58,7 @@
       "#트럼프외교",
       "#국제정세"
     ],
-    "category": "해외증시",
+    "category": "투자전략",
     "publishedAt": "2026-03-24",
     "videoUrl": "https://www.youtube.com/watch?v=gYhuIXWKU0w"
   },
@@ -79,7 +79,7 @@
       "#비트코인",
       "#미국주식"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-24",
     "videoUrl": "https://www.youtube.com/watch?v=_OYqqVqYWNI"
   },
@@ -100,7 +100,7 @@
       "#외교전쟁",
       "#글로벌마켓"
     ],
-    "category": "해외증시",
+    "category": "아시아/중국",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=uiwhD81HqRI"
   },
@@ -121,7 +121,7 @@
       "#반도체자립",
       "#프리마켓뉴욕"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=9D0ecaPUkpU"
   },
@@ -142,7 +142,7 @@
       "#미국주식",
       "#주가하락"
     ],
-    "category": "해외증시",
+    "category": "미국종목",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=TRubCGMhhhU"
   },
@@ -163,7 +163,7 @@
       "#암호화폐",
       "#코인마켓워치"
     ],
-    "category": "가상자산",
+    "category": "코인/가상자산",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=hoH8JZfP9iU"
   },
@@ -184,7 +184,7 @@
       "#트럼프",
       "#미중정상회담"
     ],
-    "category": "해외증시",
+    "category": "아시아/중국",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=Mq9ihDAlZE4"
   },
@@ -205,7 +205,7 @@
       "#저가매수",
       "#박현정"
     ],
-    "category": "국내증시",
+    "category": "투자전략",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=a06lwYkSiKY"
   },
@@ -227,7 +227,7 @@
       "#비트코인",
       "#중동전쟁"
     ],
-    "category": "채권/환율",
+    "category": "원자재/환율",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=x1sTSInZRX8"
   },
@@ -248,7 +248,7 @@
       "#국제유가",
       "#미국주식"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=Vv3DfblYcOQ"
   },
@@ -269,7 +269,7 @@
       "#유가",
       "#이란전쟁"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=00ZWGe1cWfk"
   },
@@ -290,7 +290,7 @@
       "#금리인상",
       "#크리스토퍼월러"
     ],
-    "category": "해외증시",
+    "category": "연준/금리",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=l6NA4lTFzPU"
   },
@@ -311,7 +311,7 @@
       "#롤링베어마켓",
       "#디리스킹"
     ],
-    "category": "해외증시",
+    "category": "투자전략",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=JKcL2EbKgyc"
   },
@@ -332,7 +332,7 @@
       "#이란",
       "#SMCI"
     ],
-    "category": "해외증시",
+    "category": "원자재/환율",
     "publishedAt": "2026-03-23",
     "videoUrl": "https://www.youtube.com/watch?v=UJ1UPmLHaZ0"
   },
@@ -353,7 +353,7 @@
       "#인플레이션",
       "#원자재급락"
     ],
-    "category": "해외증시",
+    "category": "미국종목",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=Znu0jMJSgco"
   },
@@ -374,7 +374,7 @@
       "#리콜",
       "#미국주식"
     ],
-    "category": "해외증시",
+    "category": "미국종목",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=RCtSoygNGyw"
   },
@@ -395,7 +395,7 @@
       "#대주주지분제한",
       "#해외거래소이탈"
     ],
-    "category": "가상자산",
+    "category": "코인/가상자산",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=sonhf7ss7g8"
   },
@@ -416,7 +416,7 @@
       "#리플",
       "#코인시장분석"
     ],
-    "category": "가상자산",
+    "category": "코인/가상자산",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=Rsh2cm0lH5Y"
   },
@@ -437,7 +437,7 @@
       "#가상화폐",
       "#아시아증시"
     ],
-    "category": "해외증시",
+    "category": "아시아/중국",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=23fU6fh8juA"
   },
@@ -458,7 +458,7 @@
       "#클래리티법",
       "#고태훈"
     ],
-    "category": "가상자산",
+    "category": "코인/가상자산",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=OFHiZFEGI1E"
   },
@@ -479,7 +479,7 @@
       "#일본증시",
       "#크리스토퍼우드"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=M7SiYeEJkl4"
   },
@@ -500,7 +500,7 @@
       "#뉴욕증시",
       "#현금화장세"
     ],
-    "category": "해외증시",
+    "category": "원자재/환율",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=S0_Wf2Alm2c"
   },
@@ -521,7 +521,7 @@
       "#이란전쟁",
       "#댄피커링"
     ],
-    "category": "해외증시",
+    "category": "원자재/환율",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=qDOpv9jxEuU"
   },
@@ -542,7 +542,7 @@
       "#가격상승",
       "#미국주식"
     ],
-    "category": "해외증시",
+    "category": "미국종목",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=2xDScL45ng8"
   },
@@ -563,7 +563,7 @@
       "#다카이치",
       "#트럼프"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-20",
     "videoUrl": "https://www.youtube.com/watch?v=ZjVKuS2ppoI"
   },
@@ -584,7 +584,7 @@
       "#낸드플래시",
       "#금가격"
     ],
-    "category": "해외증시",
+    "category": "미국종목",
     "publishedAt": "2026-03-19",
     "videoUrl": "https://www.youtube.com/watch?v=JrKI8S72EQM"
   },
@@ -605,7 +605,7 @@
       "#머스크",
       "#미국주식"
     ],
-    "category": "해외증시",
+    "category": "미국종목",
     "publishedAt": "2026-03-19",
     "videoUrl": "https://www.youtube.com/watch?v=vFhkT2rq-Fw"
   },
@@ -626,7 +626,7 @@
       "#인플레이션",
       "#암호화폐"
     ],
-    "category": "가상자산",
+    "category": "코인/가상자산",
     "publishedAt": "2026-03-19",
     "videoUrl": "https://www.youtube.com/watch?v=iYcivwwF7lo"
   },
@@ -647,7 +647,7 @@
       "#비트코인",
       "#엔비디아"
     ],
-    "category": "해외증시",
+    "category": "투자전략",
     "publishedAt": "2026-03-19",
     "videoUrl": "https://www.youtube.com/watch?v=u8y_a2A70Sg"
   },
@@ -668,7 +668,7 @@
       "#박승진실장",
       "#하나증권"
     ],
-    "category": "국내증시",
+    "category": "투자전략",
     "publishedAt": "2026-03-19",
     "videoUrl": "https://www.youtube.com/watch?v=QMCBTXK3XMM"
   },
@@ -689,7 +689,7 @@
       "#환율전망",
       "#미국채투자"
     ],
-    "category": "채권/환율",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-19",
     "videoUrl": "https://www.youtube.com/watch?v=zIzeU3L_kw0"
   },
@@ -710,7 +710,7 @@
       "#아시아증시",
       "#최설화연구원"
     ],
-    "category": "해외증시",
+    "category": "아시아/중국",
     "publishedAt": "2026-03-19",
     "videoUrl": "https://www.youtube.com/watch?v=istSvsebaqQ"
   },
@@ -731,7 +731,7 @@
       "#FOMC",
       "#인플레이션"
     ],
-    "category": "해외증시",
+    "category": "미국종목",
     "publishedAt": "2026-03-19",
     "videoUrl": "https://www.youtube.com/watch?v=zBEzj5zfJn0"
   },
@@ -752,7 +752,7 @@
       "#연준",
       "#파월"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-19",
     "videoUrl": "https://www.youtube.com/watch?v=62ozP3aPc2s"
   },
@@ -773,7 +773,7 @@
       "#엔비디아",
       "#미국주식"
     ],
-    "category": "해외증시",
+    "category": "미국종목",
     "publishedAt": "2026-03-18",
     "videoUrl": "https://www.youtube.com/watch?v=6AwgIpbCJSM"
   },
@@ -794,7 +794,7 @@
       "#기관투자자",
       "#가상자산"
     ],
-    "category": "가상자산",
+    "category": "코인/가상자산",
     "publishedAt": "2026-03-18",
     "videoUrl": "https://www.youtube.com/watch?v=AHQl9LRC3zY"
   },
@@ -816,7 +816,7 @@
       "#알트코인투자",
       "#블록체인프로젝트"
     ],
-    "category": "가상자산",
+    "category": "코인/가상자산",
     "publishedAt": "2026-03-18",
     "videoUrl": "https://www.youtube.com/watch?v=5vWCONXQHJs"
   },
@@ -837,7 +837,7 @@
       "#트럼프",
       "#금리정책"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-18",
     "videoUrl": "https://www.youtube.com/watch?v=d_4c-eY5pp0"
   },
@@ -858,7 +858,7 @@
       "#트럼프",
       "#시진핑"
     ],
-    "category": "해외증시",
+    "category": "투자전략",
     "publishedAt": "2026-03-18",
     "videoUrl": "https://www.youtube.com/watch?v=r0VxmL9VACc"
   },
@@ -879,7 +879,7 @@
       "#포지셔닝전략",
       "#중동리스크"
     ],
-    "category": "해외증시",
+    "category": "투자전략",
     "publishedAt": "2026-03-18",
     "videoUrl": "https://www.youtube.com/watch?v=MP7v4uyvTyU"
   },
@@ -900,7 +900,7 @@
       "#미국금리",
       "#중국경제"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-18",
     "videoUrl": "https://www.youtube.com/watch?v=2hzMICCVxFU"
   },
@@ -921,7 +921,7 @@
       "#중동전쟁",
       "#우크라이나"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-18",
     "videoUrl": "https://www.youtube.com/watch?v=E9XogO7ImIQ"
   },
@@ -942,7 +942,7 @@
       "#BRENT유",
       "#테슬라"
     ],
-    "category": "해외증시",
+    "category": "지정학/매크로",
     "publishedAt": "2026-03-18",
     "videoUrl": "https://www.youtube.com/watch?v=bv53IbhnIgk"
   }

@@ -18,6 +18,9 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 CHANNEL_ID = "UC8Q2uQrjoOyUWa8NFYItDWA"  # 한국경제TV 글로벌
 CHANNEL_NAME = "한국경제TV 글로벌"
 
+# 채널 전용 카테고리 (기본값: 투자전략)
+CATEGORIES = ["미국종목", "지정학/매크로", "연준/금리", "코인/가상자산", "원자재/환율", "아시아/중국", "투자전략"]
+
 # 서비스 초기화
 analysis_service = AnalysisService(GEMINI_API_KEY)
 
@@ -108,7 +111,7 @@ def main():
         print(f"[{i+1}/{len(videos)}] Processing: {v['title']} ({v['id']})")
 
         analysis = analysis_service.summarize_from_metadata(
-            v['title'], v.get('description', ''), CHANNEL_NAME
+            v['title'], v.get('description', ''), CHANNEL_NAME, categories=CATEGORIES
         )
 
         if not analysis:

@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, FlatList, TouchableOpacity, TextInput, Activity
 import SummaryCard from '../components/SummaryCard';
 import { fetchSummaries } from '../services/dataService';
 
-const CATEGORIES = ['국내증시', '해외증시', '부동산', '가상자산', '경제정책', '산업/기업', '채권/환율', '재테크'];
+const CATEGORIES = ['미국종목', '지정학/매크로', '연준/금리', '코인/가상자산', '원자재/환율', '아시아/중국', '투자전략'];
 
 const HomeScreen = ({ navigation, route }: any) => {
     const [search, setSearch] = useState('');
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     selectedChip: {
-        backgroundColor: '#1a1a1a',
+        backgroundColor: '#1a3a6b',
     },
     categoryText: {
         color: '#666',

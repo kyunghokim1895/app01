@@ -15,8 +15,10 @@ class AnalysisService:
         genai.configure(api_key=gemini_api_key)
         self.model = genai.GenerativeModel('gemini-2.0-flash')
 
-    def parse_json_from_gemini(self, text_resp):
+    def parse_json_from_gemini(self, text_resp, categories=None):
         """Gemini 응답에서 JSON 부분을 추출하여 파싱합니다."""
+        valid_categories = categories or CATEGORIES
+        default_category = valid_categories[-1]  # 마지막 카테고리를 기본값으로 사용
         try:
             if "```" in text_resp:
                 json_match = re.search(r"```(?:json)?\s*(.*?)\s*```", text_resp, re.DOTALL)
@@ -28,8 +30,8 @@ class AnalysisService:
 
             # category 유효성 검증
             category = result.get("category", "")
-            if category not in CATEGORIES:
-                category = "산업/기업"  # 기본값
+            if category not in valid_categories:
+                category = default_category
 
             return {
                 "summary": result.get("summary", result.get("요약", "")),
@@ -41,10 +43,11 @@ class AnalysisService:
             print(f"  > Gemini/JSON Error: {e}")
             return None
 
-    def summarize_from_metadata(self, title, description, channel_name=""):
+    def summarize_from_metadata(self, title, description, channel_name="", categories=None):
         """영상의 제목과 설명을 기반으로 Gemini를 사용하여 분석합니다."""
         source = channel_name or "경제/투자 관련 유튜브 채널"
-        categories_str = ", ".join(CATEGORIES)
+        use_categories = categories or CATEGORIES
+        categories_str = ", ".join(use_categories)
 
         # description이 비어있거나 너무 짧은 경우 제목만으로 분석
         has_description = description and len(description.strip()) > 20
@@ -73,7 +76,7 @@ class AnalysisService:
 
         try:
             response = self.model.generate_content(prompt)
-            return self.parse_json_from_gemini(response.text)
+            return self.parse_json_from_gemini(response.text, categories=use_categories)
         except Exception as e:
             print(f"  > Gemini Error: {e}")
             return None
