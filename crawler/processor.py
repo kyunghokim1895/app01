@@ -63,20 +63,30 @@ def load_existing_data(json_path):
         return {}
 
 
+RETENTION_DAYS = 14
+
 def save_data(json_path, data_dict):
-    """데이터 저장 (감소 방지 안전장치 포함)"""
+    """데이터 저장 (보관기간 제한 + 감소 방지 안전장치 포함)"""
+    # 보관기간 필터링
+    cutoff = (datetime.now() - timedelta(days=RETENTION_DAYS)).strftime('%Y-%m-%d')
+    filtered_dict = {k: v for k, v in data_dict.items() if v.get('publishedAt', '')[:10] >= cutoff}
+    removed = len(data_dict) - len(filtered_dict)
+    if removed > 0:
+        print(f"  > [RETENTION] {RETENTION_DAYS}일 초과 항목 {removed}개 제거")
+
+    # 안전장치: 같은 보관기간 기준으로 비교
     if os.path.exists(json_path):
         try:
             with open(json_path, "r", encoding="utf-8") as f:
-                old_count = len(json.load(f))
-            new_count = len(data_dict)
-            if new_count < old_count * 0.9:
-                print(f"  > [SAFETY] 데이터 감소 감지! 기존 {old_count}개 → {new_count}개. 저장을 거부합니다.")
+                old_data = json.load(f)
+            old_filtered_count = sum(1 for item in old_data if item.get('publishedAt', '')[:10] >= cutoff)
+            if len(filtered_dict) < old_filtered_count * 0.9:
+                print(f"  > [SAFETY] 데이터 감소 감지! 기존 {old_filtered_count}개 → {len(filtered_dict)}개. 저장을 거부합니다.")
                 return False
         except Exception:
             pass
 
-    data_list = sorted(data_dict.values(), key=lambda x: x.get('publishedAt', ''), reverse=True)
+    data_list = sorted(filtered_dict.values(), key=lambda x: x.get('publishedAt', ''), reverse=True)
     os.makedirs(os.path.dirname(json_path), exist_ok=True)
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(data_list, f, ensure_ascii=False, indent=2)
