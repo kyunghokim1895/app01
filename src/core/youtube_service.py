@@ -5,10 +5,11 @@ import html
 from datetime import datetime, timedelta
 import googleapiclient.discovery
 
-def get_video_list(api_key, channel_id, days=7, max_results=None):
+def get_video_list(api_key, channel_id, days=7, max_results=None, skip_filter=False):
     """
     유튜브 API의 playlistItems 엔드포인트를 사용하여 최신 영상 목록을 가져옵니다.
     페이지네이션으로 기간 내 모든 영상을 수집한 뒤, 쇼츠(60초 이하)와 라이브 방송을 제외합니다.
+    skip_filter=True이면 쇼츠/라이브 필터링을 건너뜁니다.
     """
     max_retries = 3
 
@@ -74,6 +75,9 @@ def get_video_list(api_key, channel_id, days=7, max_results=None):
                 return []
 
             # 2단계: 쇼츠 및 라이브 필터링
+            if skip_filter:
+                print(f"   [API] Skipping shorts/lives filter. Returning all {len(candidates)} videos.")
+                return candidates
             videos = _filter_shorts_and_lives(youtube, candidates)
             print(f"   [API] After filtering: {len(videos)} videos (excluded {len(candidates) - len(videos)} shorts/lives).")
             return videos
