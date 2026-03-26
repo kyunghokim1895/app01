@@ -4,6 +4,7 @@ import sqlite3
 import json
 import time
 from datetime import datetime, timedelta
+from collections import defaultdict
 from dotenv import load_dotenv
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -65,6 +66,46 @@ def load_existing_data(json_path):
 
 RETENTION_DAYS = 14
 
+# 중복 필터링용 키워드 목록 (같은 날 같은 주제 영상은 1개만 수집)
+DEDUP_KEYWORDS = [
+    '삼성전자', 'SK하이닉스', '하이닉스', '엔비디아', '테슬라', '애플', 'TSMC',
+    '네이버', '카카오', '현대차', '기아', 'LG엔솔', 'LG에너지', '한화에어로',
+    '한화오션', '한화시스템', '포스코', '셀트리온', 'KB금융', '신한지주',
+    '메타', '마이크로소프트', '구글', '아마존', '엔비디아',
+    '비트코인', '이더리움', '리플', 'XRP', '솔라나', '코인',
+    '트럼프', '바이든', '윤석열', '이재명',
+    '금값', '유가', '환율', '금리', '국채',
+    '반도체', '원전', '조선', '배터리', '방산', '바이오', '로봇', '자율주행',
+    '부동산', '전세', '아파트', '분양', '재건축',
+]
+
+def dedup_videos_by_topic(videos):
+    """같은 날짜에 같은 주제를 다루는 영상은 1개만 남깁니다."""
+    def extract_topics(title):
+        topics = set()
+        for kw in DEDUP_KEYWORDS:
+            if kw in title:
+                # 유사 키워드 통합
+                if kw in ('하이닉스',): topics.add('SK하이닉스')
+                elif kw in ('XRP',): topics.add('리플')
+                elif kw in ('LG에너지',): topics.add('LG엔솔')
+                else: topics.add(kw)
+        return frozenset(topics) if topics else None
+
+    seen = set()
+    result = []
+    for v in videos:
+        topics = extract_topics(v['title'])
+        if topics is None:
+            # 키워드 매칭 안 되는 영상은 모두 포함
+            result.append(v)
+            continue
+        key = (v['publishedAt'], topics)
+        if key not in seen:
+            seen.add(key)
+            result.append(v)
+    return result
+
 def save_data(json_path, data_dict):
     """데이터 저장 (보관기간 제한 + 감소 방지 안전장치 포함)"""
     # 보관기간 필터링
@@ -102,6 +143,11 @@ def main():
     # 2. 영상 목록 가져오기
     videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
     print(f"  > [DEBUG] YouTube API returned total {len(videos)} videos.")
+
+    # 3. 같은 날 같은 주제 중복 제거
+    before_count = len(videos)
+    videos = dedup_videos_by_topic(videos)
+    print(f"  > [DEDUP] {before_count} → {len(videos)} videos (removed {before_count - len(videos)} duplicates)")
 
     if not videos:
         print("  > [WARNING] No videos found. Check Channel ID or API Key.")
