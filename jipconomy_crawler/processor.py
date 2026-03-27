@@ -87,7 +87,7 @@ def main():
     existing_data = list(unique_data.values())
     existing_ids = {item['id'] for item in existing_data}
 
-    videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
+    videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID, skip_filter=True)
 
     for i, v in enumerate(videos):
         cursor.execute("SELECT summary FROM videos WHERE id=?", (v['id'],))

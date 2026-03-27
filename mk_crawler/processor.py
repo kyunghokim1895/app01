@@ -89,7 +89,7 @@ def main():
     existing_dict = load_existing_data(JSON_OUTPUT_PATH)
 
     # 2. 영상 목록 가져오기
-    videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID)
+    videos = get_video_list(YOUTUBE_API_KEY, CHANNEL_ID, skip_filter=True)
     print(f"  > [DEBUG] YouTube API returned total {len(videos)} videos.")
 
     if not videos:
