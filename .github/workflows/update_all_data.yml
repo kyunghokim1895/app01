@@ -3,6 +3,7 @@ name: Daily All News Summary Update
 on:
   schedule:
     - cron: "0 1 * * *"  # 매일 한국 시간 오전 10시 (UTC 01:00)
+    - cron: "0 7 * * *"  # 매일 한국 시간 오후 4시 (UTC 07:00)
     - cron: "0 11 * * *" # 매일 한국 시간 오후 8시 (UTC 11:00)
   workflow_dispatch:
 
