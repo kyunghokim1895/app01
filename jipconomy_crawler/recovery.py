@@ -22,7 +22,7 @@ CHANNEL_ID = "UCAVdqlngIAxHtwlCA2hjv3A" # 집코노미
 
 # Gemini 설정
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-2.0-flash')
+model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
 # DB 및 출력 경로
 DB_PATH = "summaries.db"

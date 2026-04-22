@@ -5,7 +5,7 @@ import time
 
 load_dotenv()
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel('gemini-2.0-flash')
+model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
 audio_path = "temp_audio_rF-dBu2eMw4.m4a"
 print("Uploading...")

@@ -1,10 +1,38 @@
 import os
 import json
 import re
+import time
 import google.generativeai as genai
 
 # 카테고리 목록 (프론트엔드와 동기화)
 CATEGORIES = ["국내증시", "해외증시", "부동산", "가상자산", "경제정책", "산업/기업", "채권/환율", "재테크"]
+
+_TRANSIENT_TOKENS = (
+    "429", "500", "502", "503", "504",
+    "resource_exhausted", "resource exhausted",
+    "internal", "bad gateway", "unavailable",
+    "deadline", "overloaded", "high demand",
+)
+
+
+def _is_transient_error(err: Exception) -> bool:
+    msg = str(err).lower()
+    return any(tok in msg for tok in _TRANSIENT_TOKENS)
+
+
+def _call_with_retry(fn, *, max_retries=3, base_delay=5.0):
+    for attempt in range(max_retries + 1):
+        try:
+            return fn()
+        except Exception as e:
+            if attempt < max_retries and _is_transient_error(e):
+                delay = base_delay * (attempt + 1)
+                print(f"  > Gemini transient error (attempt {attempt + 1}/{max_retries + 1}): {e}")
+                print(f"  > Retrying in {delay:.0f}s...")
+                time.sleep(delay)
+                continue
+            raise
+
 
 class AnalysisService:
     def __init__(self, gemini_api_key):
@@ -13,7 +41,7 @@ class AnalysisService:
         self.gemini_api_key = gemini_api_key
         os.environ["GOOGLE_API_KEY"] = gemini_api_key
         genai.configure(api_key=gemini_api_key)
-        self.model = genai.GenerativeModel('gemini-2.0-flash')
+        self.model = genai.GenerativeModel('gemini-2.5-flash-lite')
 
     def parse_json_from_gemini(self, text_resp, categories=None):
         """Gemini 응답에서 JSON 부분을 추출하여 파싱합니다."""
@@ -75,7 +103,7 @@ class AnalysisService:
 }}"""
 
         try:
-            response = self.model.generate_content(prompt)
+            response = _call_with_retry(lambda: self.model.generate_content(prompt))
             return self.parse_json_from_gemini(response.text, categories=use_categories)
         except Exception as e:
             print(f"  > Gemini Error: {e}")

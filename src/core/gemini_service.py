@@ -8,7 +8,8 @@ import google.generativeai as genai
 
 def init_gemini(api_key):
     genai.configure(api_key=api_key)
-    return genai.GenerativeModel('gemini-2.0-flash')
+    # 멀티모달(영상/오디오)이 필요해지면 'gemini-2.5-flash'로 승격 검토
+    return genai.GenerativeModel('gemini-2.5-flash-lite')
 
 def parse_json_from_gemini(text_resp):
     try:
