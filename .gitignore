@@ -10,3 +10,4 @@ __pycache__/
 temp_audio_*
 temp_video_*
 temp_sub_*
+.genkit/
