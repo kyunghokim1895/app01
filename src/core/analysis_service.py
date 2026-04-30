@@ -2,7 +2,7 @@ import os
 import json
 import re
 import time
-import google.generativeai as genai
+from google import genai
 
 # 카테고리 목록 (프론트엔드와 동기화)
 CATEGORIES = ["국내증시", "해외증시", "부동산", "가상자산", "경제정책", "산업/기업", "채권/환율", "재테크"]
@@ -40,8 +40,8 @@ class AnalysisService:
             raise ValueError("GEMINI_API_KEY is required for AnalysisService")
         self.gemini_api_key = gemini_api_key
         os.environ["GOOGLE_API_KEY"] = gemini_api_key
-        genai.configure(api_key=gemini_api_key)
-        self.model = genai.GenerativeModel('gemini-2.5-flash-lite')
+        self.model_name = 'gemini-2.5-flash-lite'
+        self.client = genai.Client(api_key=gemini_api_key)
 
     def parse_json_from_gemini(self, text_resp, categories=None):
         """Gemini 응답에서 JSON 부분을 추출하여 파싱합니다."""
@@ -103,7 +103,12 @@ class AnalysisService:
 }}"""
 
         try:
-            response = _call_with_retry(lambda: self.model.generate_content(prompt))
+            response = _call_with_retry(
+                lambda: self.client.models.generate_content(
+                    model=self.model_name,
+                    contents=prompt,
+                )
+            )
             return self.parse_json_from_gemini(response.text, categories=use_categories)
         except Exception as e:
             print(f"  > Gemini Error: {e}")
