@@ -105,7 +105,8 @@ jobs:
 
     env:
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
-      NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+      # 채널별 DB ID는 notion_sync.py의 DB_MAP에 하드코딩(토큰 없이는 무의미).
+      # 필요 시 NOTION_DATABASE_MAP(JSON) secret으로 덮어쓰기 가능.
       PYTHONUNBUFFERED: "1"
 
     steps:
