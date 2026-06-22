@@ -3,15 +3,28 @@
 
 # 스크립트 위치를 기준으로 프로젝트 루트 설정 (경로 하드코딩 제거)
 PROJECT_ROOT="$(cd "$(dirname "$0")" && pwd)"
-PYTHON_BIN="/Library/Frameworks/Python.framework/Versions/3.11/bin/python3"
+# mac 로컬 실행 시엔 기존 프레임워크 파이썬, CI(Linux) 등에선 PATH의 python3 사용.
+# 환경변수 PYTHON_BIN으로 덮어쓸 수 있음.
+if [[ -z "$PYTHON_BIN" ]]; then
+    if [[ -x "/Library/Frameworks/Python.framework/Versions/3.11/bin/python3" ]]; then
+        PYTHON_BIN="/Library/Frameworks/Python.framework/Versions/3.11/bin/python3"
+    else
+        PYTHON_BIN="python3"
+    fi
+fi
 LOG_FILE="$PROJECT_ROOT/update_log.txt"
 
 echo "--- 업데이트 시작: $(date +'%Y-%m-%d %H:%M:%S') ---" | tee -a "$LOG_FILE"
 
 # 스크립트 자체가 caffeinate 하에서 실행되도록 보장 (잠자기 방지)
 if [[ "$1" != "--child" ]]; then
-    echo "Starting with caffeinate (system sleep prevention active)..." | tee -a "$LOG_FILE"
-    caffeinate -i "$0" --child "$@"
+    if command -v caffeinate >/dev/null 2>&1; then
+        echo "Starting with caffeinate (system sleep prevention active)..." | tee -a "$LOG_FILE"
+        caffeinate -i "$0" --child "$@"
+    else
+        # Linux/CI 등 caffeinate가 없는 환경에서는 그대로 실행
+        "$0" --child "$@"
+    fi
     exit $?
 fi
 shift # --child 인자 제거

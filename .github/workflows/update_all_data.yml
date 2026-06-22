@@ -9,7 +9,7 @@ on:
 
 jobs:
   update-apps:
-    runs-on: [self-hosted, macOS]
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       max-parallel: 1
@@ -36,12 +36,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
       - name: Git Safe Directory
         run: git config --global --add safe.directory "*"
 
       - name: Install dependencies
         run: |
-          export PATH="/opt/homebrew/bin:$PATH"
+          sudo apt-get update -qq && sudo apt-get install -y -qq zsh
           python3 -m pip install -U google-genai google-api-python-client python-dotenv
 
       - name: Force Sync with Remote
@@ -53,7 +58,6 @@ jobs:
 
       - name: Run Update Script (Parallel Mode)
         run: |
-          export PATH="/opt/homebrew/bin:$PATH"
           chmod +x run_all_updates.sh
           ./run_all_updates.sh ${{ matrix.app }} --no-sync
 
@@ -101,7 +105,7 @@ jobs:
   notion-sync:
     needs: update-apps
     if: ${{ always() }}   # 일부 크롤러가 실패해도 존재하는 data.json은 동기화
-    runs-on: [self-hosted, macOS]
+    runs-on: ubuntu-latest
 
     env:
       NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
@@ -115,6 +119,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
       - name: Git Safe Directory
         run: git config --global --add safe.directory "*"
 
@@ -127,10 +136,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          export PATH="/opt/homebrew/bin:$PATH"
           python3 -m pip install -U requests python-dotenv
 
       - name: Sync to Notion
         run: |
-          export PATH="/opt/homebrew/bin:$PATH"
           python3 notion_sync.py
